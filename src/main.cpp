@@ -9,7 +9,7 @@
 //	描述：定义一些辅助宏
 //------------------------------------------------------------------------------------------------
 #define WINDOW_TITLE \
-    L"【致我们永不熄灭的游戏开发梦想】Windows消息处理之 键盘消息处理 " //为窗口标题定义的宏
+    L"游戏集合" //为窗口标题定义的宏
 
 //-----------------------------------【全局函数声明部分】-------------------------------------
 //	描述：全局函数声明，防止“未声明的标识”系列错误
@@ -30,12 +30,12 @@ int init_wnd_cls(WNDCLASSEX& wndClass, HINSTANCE& hInstance)
     wndClass.cbClsExtra = 0;
     wndClass.cbWndExtra = 0;
     wndClass.hInstance = hInstance;
-    wndClass.hIcon = (HICON)::LoadImage(NULL, L"icon.ico", IMAGE_ICON, 0, 0,
+    wndClass.hIcon = (HICON)::LoadImage(NULL, TEXT("./resource/icon.ico"), IMAGE_ICON, 0, 0,
         LR_DEFAULTSIZE | LR_LOADFROMFILE);
     wndClass.hCursor = LoadCursor(NULL, IDC_ARROW);
     wndClass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
     wndClass.lpszMenuName = NULL;
-    wndClass.lpszClassName = L"ForTheDreamOfGameDevelop";
+    wndClass.lpszClassName = L"MainWin";
 
     if (!RegisterClassEx(
             &wndClass)) //设计完窗口后，需要对窗口类进行注册，这样才能创建该类型的窗口
@@ -56,7 +56,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
     ::screen_width = GetSystemMetrics(SM_CXSCREEN);
     ::screen_height = GetSystemMetrics(SM_CYSCREEN);
 
-    HWND hwnd = CreateWindow(L"ForTheDreamOfGameDevelop", WINDOW_TITLE, WS_POPUP,
+    HWND hwnd = CreateWindow(L"MainWin", WINDOW_TITLE, WS_POPUP,
         0, 0, ::screen_width, ::screen_height, NULL, NULL,
         hInstance, NULL);
     ShowWindow(hwnd, nShowCmd);
@@ -138,8 +138,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam,
             ::screen_width / 2 - 20, ::screen_height / 2 + 100, 100,
             40, hwnd, (HMENU)exit_button_id,
             (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE), NULL);
-        hBitMap = (HBITMAP)LoadImage(NULL, TEXT("male.bmp"), IMAGE_BITMAP, 0, 0,
-            LR_LOADFROMFILE);
         break;
     case WM_COMMAND:
         if (LOWORD(wParam) == main_button_id) {

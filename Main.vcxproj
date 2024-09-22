@@ -19,18 +19,21 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Button.cpp" />
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\base\ables.hpp" />
-    <ClInclude Include="include\button.hpp" />
     <ClInclude Include="include\game.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="resource\ball.bmp" />
     <Image Include="resource\box.bmp" />
     <Image Include="resource\male.bmp" />
+    <Image Include="resource\wall.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="scripts\format.sh" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

@@ -4,13 +4,12 @@
 //	描述：初始化函数，进行一些简单的初始化
 //------------------------------------------------------------------------------------------------
 HDC g_hdc, g_mdc, g_bufdc;
-HBITMAP b_male, b_box;
+HBITMAP b_male, b_box, b_ball, b_wall;
 int male_pic_width, male_pic_height;
 int male_sprite_width, male_sprit_height;
 
-
-int x, y;
-HWND* main_hwnd;
+int x { -1 }, y { -1 };
+HWND* main_hwnd { nullptr };
 bool game_init_flag { false };
 constexpr int MAIN_WINDOW(WM_APP + 1);
 
@@ -21,7 +20,6 @@ enum class character_status_t : char { UP = 2,
 
 character_status_t character_status;
 int character_idx;
-
 void game_process_key_down(HWND hwnd, UINT message, WPARAM wparam,
     LPARAM lparam)
 {
@@ -80,9 +78,13 @@ BOOL game_init(HWND hwnd)
     b_male = (HBITMAP)LoadImage(NULL, TEXT("./resource/male.bmp"), IMAGE_BITMAP,
         ::male_pic_width, ::male_pic_height, LR_LOADFROMFILE);
 
-    b_male = (HBITMAP)LoadImage(NULL, TEXT("./resource/male.bmp"), IMAGE_BITMAP,
-        ::male_pic_width, ::male_pic_height, LR_LOADFROMFILE);
+    b_box = (HBITMAP)LoadImage(NULL, TEXT("./resource/box.bmp"), IMAGE_BITMAP,
+        60, 60, LR_LOADFROMFILE);
 
+    b_ball = (HBITMAP)LoadImage(NULL, TEXT("./resource/ball.bmp"), IMAGE_BITMAP,
+        32, 32, LR_LOADFROMFILE);
+    b_wall = (HBITMAP)LoadImage(NULL, TEXT("./resource/wall.bmp"), IMAGE_BITMAP,
+        128, 128, LR_LOADFROMFILE);
     return TRUE;
 }
 
@@ -95,7 +97,6 @@ VOID game_paint(HWND hwnd, ULONGLONG* pre_paint_time)
     int screen_width, screen_height;
     screen_width = GetSystemMetrics(SM_CXSCREEN);
     screen_height = GetSystemMetrics(SM_CYSCREEN);
-    SelectObject(g_bufdc, b_male);
 
     HBRUSH hBrush = (HBRUSH)GetStockObject(WHITE_BRUSH);
     RECT rect { 0, 0, screen_width, screen_height };
@@ -103,10 +104,22 @@ VOID game_paint(HWND hwnd, ULONGLONG* pre_paint_time)
     DeleteObject(hBrush);
 
     SelectObject(g_bufdc, b_male);
-    TransparentBlt(g_mdc, x * 50, y * 50, 50, 50,
+    TransparentBlt(g_mdc, x * 64, y * 64, 64, 64,
         g_bufdc, static_cast<int>(character_status) * male_sprite_width, character_idx / 5 * male_sprit_height, male_sprite_width, male_sprit_height,
         RGB(0, 0, 0));
     character_idx = (character_idx + 1) % 15;
+
+    SelectObject(g_bufdc, b_box);
+    BitBlt(g_mdc, 10 * 64, 10 * 64, 64, 64, g_bufdc, 0, 0, SRCCOPY);
+
+    SelectObject(g_bufdc, b_ball);
+    TransparentBlt(g_mdc, 20 * 64, 20 * 64, 64, 64,
+        g_bufdc, 0, 0, 32, 32,
+        RGB(0, 0, 0));
+
+    SelectObject(g_bufdc, b_wall);
+    BitBlt(g_mdc, 15 * 64, 15 * 64, 64, 64,
+        g_bufdc, 0, 0, SRCCOPY);
 
     BitBlt(g_hdc, 0, 0, screen_width, screen_height, g_mdc, 0, 0, SRCCOPY);
     *pre_paint_time = GetTickCount64();
@@ -120,8 +133,12 @@ BOOL game_cleanup()
 {
     game_init_flag = false;
     DeleteObject(b_male);
+    DeleteObject(b_ball);
+    DeleteObject(b_wall);
+    DeleteObject(b_box);
     DeleteDC(g_bufdc);
     DeleteDC(g_mdc);
     ReleaseDC(*main_hwnd, g_hdc);
+    main_hwnd = nullptr;
     return TRUE;
 }
