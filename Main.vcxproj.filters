@@ -27,6 +27,9 @@
     <ClCompile Include="src\game.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\common.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\game.hpp">
@@ -34,6 +37,9 @@
     </ClInclude>
     <ClInclude Include="include\base\ables.hpp">
       <Filter>include\base</Filter>
+    </ClInclude>
+    <ClInclude Include="include\common.hpp">
+      <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

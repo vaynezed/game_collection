@@ -1,14 +1,13 @@
 #include "game.hpp"
-//-----------------------------------【Game_Init(
-//)函数】--------------------------------------
-//	描述：初始化函数，进行一些简单的初始化
-//------------------------------------------------------------------------------------------------
+#include "common.hpp"
+#include <vector>
+
 HDC g_hdc, g_mdc, g_bufdc;
 HBITMAP b_male, b_box, b_ball, b_wall;
 int male_pic_width, male_pic_height;
 int male_sprite_width, male_sprit_height;
 
-int x { -1 }, y { -1 };
+int male_x { -1 }, male_y { -1 };
 HWND* main_hwnd { nullptr };
 bool game_init_flag { false };
 constexpr int MAIN_WINDOW(WM_APP + 1);
@@ -18,8 +17,12 @@ enum class character_status_t : char { UP = 2,
     RIGHT = 1,
     DOWN = 0 };
 
+constexpr int wall = 0, person = 1, ball = 2, box = 3;
+std::vector<std::vector<int>> graph;
+
 character_status_t character_status;
 int character_idx;
+constexpr int sprite_height{ 64 }, sprite_width{ 64 };
 void game_process_key_down(HWND hwnd, UINT message, WPARAM wparam,
     LPARAM lparam)
 {
@@ -31,32 +34,34 @@ void game_process_key_down(HWND hwnd, UINT message, WPARAM wparam,
     case VK_UP:
     case 'W':
         character_status = character_status_t::UP;
-        y--;
+        male_y--;
         break;
     case VK_DOWN:
     case 'S':
         character_status = character_status_t::DOWN;
-        y++;
+        male_y++;
         break;
     case VK_RIGHT:
     case 'D':
         character_status = character_status_t::RIGHT;
-        x++;
+        male_x++;
         break;
     case VK_LEFT:
     case 'A':
         character_status = character_status_t::LEFT;
-        x--;
+        male_x--;
         break;
     default:
         break;
     }
 }
+
 BOOL game_init(HWND hwnd)
 {
+    graph = { { wall, wall, wall, wall, wall },
+        { wall, person, box, ball, wall },
+        { wall, wall, wall, wall, wall } };
     game_init_flag = true;
-    x = 0;
-    y = 0;
 
     main_hwnd = &hwnd;
 
@@ -88,13 +93,8 @@ BOOL game_init(HWND hwnd)
     return TRUE;
 }
 
-//-----------------------------------【Game_Paint(
-//)函数】--------------------------------------
-//	描述：绘制函数，在此函数中进行绘制操作
-//--------------------------------------------------------------------------------------------------
-VOID game_paint(HWND hwnd, ULONGLONG* pre_paint_time)
+void draw_blackground()
 {
-    int screen_width, screen_height;
     screen_width = GetSystemMetrics(SM_CXSCREEN);
     screen_height = GetSystemMetrics(SM_CYSCREEN);
 
@@ -102,33 +102,51 @@ VOID game_paint(HWND hwnd, ULONGLONG* pre_paint_time)
     RECT rect { 0, 0, screen_width, screen_height };
     FillRect(g_mdc, &rect, hBrush);
     DeleteObject(hBrush);
+}
 
-    SelectObject(g_bufdc, b_male);
-    TransparentBlt(g_mdc, x * 64, y * 64, 64, 64,
-        g_bufdc, static_cast<int>(character_status) * male_sprite_width, character_idx / 5 * male_sprit_height, male_sprite_width, male_sprit_height,
-        RGB(0, 0, 0));
+void draw_ele(int pic_type, int y, int x)
+{
+    if (pic_type == wall) {
+        SelectObject(g_bufdc, b_wall);
+        BitBlt(g_mdc, x * sprite_height, y * sprite_width,  sprite_height, sprite_width,
+            g_bufdc, 0, 0, SRCCOPY);
+    } else if (pic_type == person) {
+        SelectObject(g_bufdc, b_male);
+        TransparentBlt(g_mdc, y * sprite_height,  x * sprite_width, sprite_height, sprite_width,
+            g_bufdc, static_cast<int>(character_status) * male_sprite_width, character_idx / 5 * male_sprit_height, male_sprite_width, male_sprit_height,
+            RGB(0, 0, 0));
+    } else if (pic_type == box) {
+        SelectObject(g_bufdc, b_box);
+        BitBlt(g_mdc,  x* sprite_height, y * sprite_width, sprite_height,sprite_width, g_bufdc, 0, 0, SRCCOPY);
+    } else if (pic_type == ball) {
+        SelectObject(g_bufdc, b_ball);
+        TransparentBlt(g_mdc,  x * sprite_height, y * sprite_width, sprite_height, sprite_width,
+            g_bufdc, 0, 0, 32, 32,
+            RGB(0, 0, 0));
+    }
+}
+
+void draw_graph()
+{
+    int X = graph.front().size(), Y = graph.size();
+	for (int y = 0; y < Y; y++) {
+		for (int x = 0; x < X; x++) {
+            draw_ele(graph[y][x], y, x);
+        }
+    }
     character_idx = (character_idx + 1) % 15;
+    const int GRAPH_HEIGHT{ Y * sprite_height }, GRAPH_WIDTH{ X * sprite_width };
+    BitBlt(g_hdc, screen_width / 2- GRAPH_WIDTH  /2 ,  screen_height / 2 - GRAPH_HEIGHT /2 , GRAPH_WIDTH, GRAPH_HEIGHT, g_mdc, 0, 0, SRCCOPY);
+}
 
-    SelectObject(g_bufdc, b_box);
-    BitBlt(g_mdc, 10 * 64, 10 * 64, 64, 64, g_bufdc, 0, 0, SRCCOPY);
 
-    SelectObject(g_bufdc, b_ball);
-    TransparentBlt(g_mdc, 20 * 64, 20 * 64, 64, 64,
-        g_bufdc, 0, 0, 32, 32,
-        RGB(0, 0, 0));
-
-    SelectObject(g_bufdc, b_wall);
-    BitBlt(g_mdc, 15 * 64, 15 * 64, 64, 64,
-        g_bufdc, 0, 0, SRCCOPY);
-
-    BitBlt(g_hdc, 0, 0, screen_width, screen_height, g_mdc, 0, 0, SRCCOPY);
+VOID game_paint(HWND hwnd, ULONGLONG* pre_paint_time)
+{
+    draw_blackground();
+    draw_graph();
     *pre_paint_time = GetTickCount64();
 }
 
-//-----------------------------------【Game_CleanUp(
-//)函数】--------------------------------
-//	描述：资源清理函数，在此函数中进行程序退出前资源的清理工作
-//---------------------------------------------------------------------------------------------------
 BOOL game_cleanup()
 {
     game_init_flag = false;
