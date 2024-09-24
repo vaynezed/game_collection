@@ -7,7 +7,6 @@ HBITMAP b_male, b_box, b_ball, b_wall;
 int male_pic_width, male_pic_height;
 int male_sprite_width, male_sprit_height;
 
-int male_x { -1 }, male_y { -1 };
 HWND* main_hwnd { nullptr };
 bool game_init_flag { false };
 constexpr int MAIN_WINDOW(WM_APP + 1);
@@ -17,15 +16,60 @@ enum class character_status_t : char { UP = 2,
     RIGHT = 1,
     DOWN = 0 };
 
-constexpr int wall = 0, person = 1, ball = 2, box = 3;
-std::vector<std::vector<int>> graph;
+constexpr int NONE = 0, wall = 1, person = 2, ball = 4, box = 8;
 
 character_status_t character_status;
 int character_idx;
-constexpr int sprite_height{ 64 }, sprite_width{ 64 };
+constexpr int sprite_height { 64 }, sprite_width { 64 };
+
+struct graph_data_t {
+    std::vector<std::vector<int>> graph;
+    int male_x, male_y;
+};
+graph_data_t graph_data;
+
+void update_graph(int x_offset, int y_offset);
+
+bool is_gme_end()
+{
+    return false;
+}
+
+void update_graph(int x_offset, int y_offset)
+{
+    int& person = graph_data.graph[graph_data.male_y][graph_data.male_x];
+
+    int next_male_x = graph_data.male_x + x_offset;
+    int next_male_y = graph_data.male_y + y_offset;
+    int& ele = graph_data.graph[next_male_y][next_male_x];
+
+    if (ele & wall) {
+        return;
+    } else if (ele & box) {
+        int next_ele_x = next_male_x + x_offset;
+        int next_ele_y = next_male_y + y_offset;
+        int& next_ele = graph_data.graph[next_ele_y][next_ele_x];
+        if ((next_ele & wall) || (next_ele & box)) {
+            return;
+        } else {
+            graph_data.male_x = next_male_x;
+            graph_data.male_y = next_male_y;
+            ele |= person;
+            person &= (~person);
+            next_ele |= box;
+            ele &= (~box);
+        }
+    } else {
+        ele |= person;
+        person &= (~person);
+        graph_data.male_x = next_male_x;
+        graph_data.male_y = next_male_y;
+    }
+}
 void game_process_key_down(HWND hwnd, UINT message, WPARAM wparam,
     LPARAM lparam)
 {
+    int x_offset { 0 }, y_offset { 0 };
     switch (wparam) {
     case VK_ESCAPE:
         game_cleanup();
@@ -34,22 +78,26 @@ void game_process_key_down(HWND hwnd, UINT message, WPARAM wparam,
     case VK_UP:
     case 'W':
         character_status = character_status_t::UP;
-        male_y--;
+        y_offset = 1;
+        update_graph(x_offset, y_offset);
         break;
     case VK_DOWN:
     case 'S':
         character_status = character_status_t::DOWN;
-        male_y++;
+        x_offset = -1;
+        update_graph(x_offset, y_offset);
         break;
     case VK_RIGHT:
     case 'D':
         character_status = character_status_t::RIGHT;
-        male_x++;
+        x_offset = 1;
+        update_graph(x_offset, y_offset);
         break;
     case VK_LEFT:
     case 'A':
         character_status = character_status_t::LEFT;
-        male_x--;
+        x_offset = -1;
+        update_graph(x_offset, y_offset);
         break;
     default:
         break;
@@ -58,16 +106,13 @@ void game_process_key_down(HWND hwnd, UINT message, WPARAM wparam,
 
 BOOL game_init(HWND hwnd)
 {
-    graph = { { wall, wall, wall, wall, wall },
+    graph_data.graph = { { wall, wall, wall, wall, wall },
         { wall, person, box, ball, wall },
         { wall, wall, wall, wall, wall } };
+    graph_data.male_y = graph_data.male_x = 1;
     game_init_flag = true;
 
     main_hwnd = &hwnd;
-
-    int screen_width, screen_height;
-    screen_width = GetSystemMetrics(SM_CXSCREEN);
-    screen_height = GetSystemMetrics(SM_CYSCREEN);
 
     g_hdc = GetDC(hwnd);
     g_mdc = CreateCompatibleDC(g_hdc);
@@ -106,21 +151,23 @@ void draw_blackground()
 
 void draw_ele(int pic_type, int y, int x)
 {
-    if (pic_type == wall) {
+    if (pic_type & wall) {
         SelectObject(g_bufdc, b_wall);
-        BitBlt(g_mdc, x * sprite_height, y * sprite_width,  sprite_height, sprite_width,
+        BitBlt(g_mdc, x * sprite_height, y * sprite_width, sprite_height, sprite_width,
             g_bufdc, 0, 0, SRCCOPY);
-    } else if (pic_type == person) {
+    } else if (pic_type & person) {
         SelectObject(g_bufdc, b_male);
-        TransparentBlt(g_mdc, y * sprite_height,  x * sprite_width, sprite_height, sprite_width,
+        BOOL success_flag = TransparentBlt(g_mdc, x * sprite_height, y * sprite_width, sprite_height, sprite_width,
             g_bufdc, static_cast<int>(character_status) * male_sprite_width, character_idx / 5 * male_sprit_height, male_sprite_width, male_sprit_height,
             RGB(0, 0, 0));
-    } else if (pic_type == box) {
+        if (!success_flag)
+            MessageBeep(NULL);
+    } else if (pic_type & box) {
         SelectObject(g_bufdc, b_box);
-        BitBlt(g_mdc,  x* sprite_height, y * sprite_width, sprite_height,sprite_width, g_bufdc, 0, 0, SRCCOPY);
-    } else if (pic_type == ball) {
+        BitBlt(g_mdc, x * sprite_height, y * sprite_width, sprite_height, sprite_width, g_bufdc, 0, 0, SRCCOPY);
+    } else if (pic_type & ball) {
         SelectObject(g_bufdc, b_ball);
-        TransparentBlt(g_mdc,  x * sprite_height, y * sprite_width, sprite_height, sprite_width,
+        TransparentBlt(g_mdc, x * sprite_height, y * sprite_width, sprite_height, sprite_width,
             g_bufdc, 0, 0, 32, 32,
             RGB(0, 0, 0));
     }
@@ -128,19 +175,20 @@ void draw_ele(int pic_type, int y, int x)
 
 void draw_graph()
 {
+    std::vector<std::vector<int>>& graph = graph_data.graph;
+
     int X = graph.front().size(), Y = graph.size();
-	for (int y = 0; y < Y; y++) {
-		for (int x = 0; x < X; x++) {
+    for (int y = 0; y < Y; y++) {
+        for (int x = 0; x < X; x++) {
             draw_ele(graph[y][x], y, x);
         }
     }
     character_idx = (character_idx + 1) % 15;
-    const int GRAPH_HEIGHT{ Y * sprite_height }, GRAPH_WIDTH{ X * sprite_width };
-    BitBlt(g_hdc, screen_width / 2- GRAPH_WIDTH  /2 ,  screen_height / 2 - GRAPH_HEIGHT /2 , GRAPH_WIDTH, GRAPH_HEIGHT, g_mdc, 0, 0, SRCCOPY);
+    const int GRAPH_HEIGHT { Y * sprite_height }, GRAPH_WIDTH { X * sprite_width };
+    BitBlt(g_hdc, screen_width / 2 - GRAPH_WIDTH / 2, screen_height / 2 - GRAPH_HEIGHT / 2, GRAPH_WIDTH * 5, GRAPH_HEIGHT * 5, g_mdc, 0, 0, SRCCOPY);
 }
 
-
-VOID game_paint(HWND hwnd, ULONGLONG* pre_paint_time)
+VOID game_update(HWND hwnd, ULONGLONG* pre_paint_time)
 {
     draw_blackground();
     draw_graph();
