@@ -27,6 +27,7 @@
     <ClInclude Include="include\base\ables.hpp" />
     <ClInclude Include="include\common.hpp" />
     <ClInclude Include="include\game.hpp" />
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="resource\ball.bmp" />
@@ -36,6 +37,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="scripts\format.sh" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Main.rc" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

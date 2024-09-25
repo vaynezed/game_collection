@@ -52,9 +52,6 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
     ShowWindow(hwnd, nShowCmd);
     UpdateWindow(hwnd);
 
-    ULONGLONG
-    g_tPre = 0,
-    g_tNow = 0;
 
     MSG msg = { 0 };
     while (msg.message != WM_QUIT) {
@@ -65,9 +62,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
             DispatchMessage(&msg);
         } else {
             if (::game_init_flag) {
-                g_tNow = GetTickCount64();
-                if (g_tNow - g_tPre >= 50)
-                    game_update(hwnd, &g_tPre);
+                game_loop();
             }
         }
     }

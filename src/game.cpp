@@ -1,39 +1,37 @@
 #include "game.hpp"
 #include "common.hpp"
+#include "../resource.h"
 #include <vector>
 
-HDC g_hdc, g_mdc, g_bufdc;
-HBITMAP b_male, b_box, b_ball, b_wall;
-int male_pic_width, male_pic_height;
-int male_sprite_width, male_sprit_height;
+constexpr int NONE = 0, wall = 1, person = 2, ball = 4, box = 8;
+constexpr int sprite_height { 64 }, sprite_width { 64 };
+constexpr int male_pic_width{ 64 }, male_pic_height{ 51};
+constexpr int male_sprite_width{ male_pic_width / 4 }, male_sprit_height{male_pic_height / 3};
 
-HWND* main_hwnd { nullptr };
-bool game_init_flag { false };
-constexpr int MAIN_WINDOW(WM_APP + 1);
 
+struct graph_data_t {
+    std::vector<std::vector<int>> graph{};
+    int male_x{ -1 }, male_y{ -1 };
+};
 enum class character_status_t : char { UP = 2,
     LEFT = 3,
     RIGHT = 1,
     DOWN = 0 };
 
-constexpr int NONE = 0, wall = 1, person = 2, ball = 4, box = 8;
 
-character_status_t character_status;
-int character_idx;
-constexpr int sprite_height { 64 }, sprite_width { 64 };
+ULONGLONG g_tpre{ 0 }, g_tnow{ 0 };
+HDC g_hdc{ nullptr }, g_mdc{ nullptr }, g_bufdc{ nullptr };
+HBITMAP b_male{ nullptr }, b_box{ nullptr }, b_ball{ nullptr }, b_wall{ nullptr };
+HWND* main_hwnd { nullptr };
 
-struct graph_data_t {
-    std::vector<std::vector<int>> graph;
-    int male_x, male_y;
-};
-graph_data_t graph_data;
+character_status_t character_status{character_status_t::UP};
+int character_idx{ 0 };
+
+bool game_init_flag { false };
+bool game_end{ false };
+graph_data_t graph_data{};
 
 void update_graph(int x_offset, int y_offset);
-
-bool is_gme_end()
-{
-    return false;
-}
 
 void update_graph(int x_offset, int y_offset)
 {
@@ -99,32 +97,22 @@ void game_process_key_down(HWND hwnd, UINT message, WPARAM wparam,
         x_offset = -1;
         update_graph(x_offset, y_offset);
         break;
+    case 'R':
+        break;
     default:
         break;
     }
 }
 
-BOOL game_init(HWND hwnd)
-{
+void init_game_data() {
     graph_data.graph = { { wall, wall, wall, wall, wall },
         { wall, person, box, ball, wall },
         { wall, wall, wall, wall, wall } };
     graph_data.male_y = graph_data.male_x = 1;
     game_init_flag = true;
 
-    main_hwnd = &hwnd;
-
-    g_hdc = GetDC(hwnd);
-    g_mdc = CreateCompatibleDC(g_hdc);
-    g_bufdc = CreateCompatibleDC(g_hdc);
-    HBITMAP bmp = CreateCompatibleBitmap(g_hdc, screen_width, screen_height);
-
-    SelectObject(g_mdc, bmp);
-
-    ::male_pic_width = 64 * 5;
-    ::male_pic_height = 51 * 5;
-    ::male_sprite_width = ::male_pic_width / 4;
-    ::male_sprit_height = ::male_pic_height / 3;
+}
+void load_resource() {
     b_male = (HBITMAP)LoadImage(NULL, TEXT("./resource/male.bmp"), IMAGE_BITMAP,
         ::male_pic_width, ::male_pic_height, LR_LOADFROMFILE);
 
@@ -135,14 +123,28 @@ BOOL game_init(HWND hwnd)
         32, 32, LR_LOADFROMFILE);
     b_wall = (HBITMAP)LoadImage(NULL, TEXT("./resource/wall.bmp"), IMAGE_BITMAP,
         128, 128, LR_LOADFROMFILE);
+}
+
+void init_system_resource(HWND & hwnd) {
+    g_hdc = GetDC(hwnd);
+    g_mdc = CreateCompatibleDC(g_hdc);
+    g_bufdc = CreateCompatibleDC(g_hdc);
+    HBITMAP bmp = CreateCompatibleBitmap(g_hdc, screen_width, screen_height);
+    ::main_hwnd = &hwnd;
+
+    SelectObject(g_mdc, bmp);
+}
+
+BOOL game_init(HWND& hwnd)
+{
+    init_game_data();
+    init_system_resource(hwnd);
+    load_resource();
     return TRUE;
 }
 
 void draw_blackground()
 {
-    screen_width = GetSystemMetrics(SM_CXSCREEN);
-    screen_height = GetSystemMetrics(SM_CYSCREEN);
-
     HBRUSH hBrush = (HBRUSH)GetStockObject(WHITE_BRUSH);
     RECT rect { 0, 0, screen_width, screen_height };
     FillRect(g_mdc, &rect, hBrush);
@@ -157,11 +159,9 @@ void draw_ele(int pic_type, int y, int x)
             g_bufdc, 0, 0, SRCCOPY);
     } else if (pic_type & person) {
         SelectObject(g_bufdc, b_male);
-        BOOL success_flag = TransparentBlt(g_mdc, x * sprite_height, y * sprite_width, sprite_height, sprite_width,
+        TransparentBlt(g_mdc, x * sprite_height, y * sprite_width, sprite_height, sprite_width,
             g_bufdc, static_cast<int>(character_status) * male_sprite_width, character_idx / 5 * male_sprit_height, male_sprite_width, male_sprit_height,
             RGB(0, 0, 0));
-        if (!success_flag)
-            MessageBeep(NULL);
     } else if (pic_type & box) {
         SelectObject(g_bufdc, b_box);
         BitBlt(g_mdc, x * sprite_height, y * sprite_width, sprite_height, sprite_width, g_bufdc, 0, 0, SRCCOPY);
@@ -187,12 +187,69 @@ void draw_graph()
     const int GRAPH_HEIGHT { Y * sprite_height }, GRAPH_WIDTH { X * sprite_width };
     BitBlt(g_hdc, screen_width / 2 - GRAPH_WIDTH / 2, screen_height / 2 - GRAPH_HEIGHT / 2, GRAPH_WIDTH * 5, GRAPH_HEIGHT * 5, g_mdc, 0, 0, SRCCOPY);
 }
+// 自定义消息值
+#define WM_MY_CUSTOM_MESSAGE (WM_USER + 1)
 
-VOID game_update(HWND hwnd, ULONGLONG* pre_paint_time)
+INT_PTR CALLBACK MyDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    draw_blackground();
-    draw_graph();
-    *pre_paint_time = GetTickCount64();
+    switch (message)
+    {
+    case WM_INITDIALOG:
+        return (INT_PTR)TRUE;
+
+    case WM_COMMAND:
+        // 处理命令消息，例如按钮点击
+        if (LOWORD(wParam) == IDOK)
+        {
+            EndDialog(hDlg, LOWORD(wParam));
+            return (INT_PTR)TRUE;
+        }
+        else if (LOWORD(wParam) == IDCANCEL)
+        {
+            EndDialog(hDlg, LOWORD(wParam));
+            return (INT_PTR)TRUE;
+        }
+        break;
+
+
+
+    default:
+        return (INT_PTR)FALSE;
+    }
+    return (INT_PTR)FALSE;
+}
+
+void check_game_data() {
+    std::vector<std::vector<int>>& graph = graph_data.graph;
+    int Y = graph.size(), X = graph.front().size();
+    bool find_ball_flag{ false };
+	for (int y = 0; y < Y; y++) {
+		for (int x = 0; x < X; x++) {
+            int ele = graph[y][x];
+            if (ele == ball) {
+                find_ball_flag = true;
+                break;
+            }
+        }
+        if (find_ball_flag) {
+            break;
+        }
+    }
+    if (!find_ball_flag) {
+        //DialogBox(NULL, MAKEINTRESOURCE(IDD_DIALOG1), *main_hwnd, MyDialogProc);
+    }
+}
+
+VOID game_loop()
+{
+    ::g_tnow = GetTickCount64();
+    bool need_re_rend{ (::g_tnow - ::g_tpre >= 50) };
+    if (need_re_rend) {
+		draw_blackground();
+		draw_graph();
+        check_game_data();
+        g_tpre = GetTickCount64();
+    }
 }
 
 BOOL game_cleanup()
