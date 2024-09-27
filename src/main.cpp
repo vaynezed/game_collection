@@ -13,6 +13,7 @@ constexpr int ERR { -1 }, OK { 0 };
 HWND main_button, exit_button;
 constexpr int main_button_id = 101, exit_button_id = 102;
 HBITMAP hBitMap;
+HWND main_hwnd;
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam,
     LPARAM lParam);
@@ -46,12 +47,11 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
     ::screen_width = GetSystemMetrics(SM_CXSCREEN);
     ::screen_height = GetSystemMetrics(SM_CYSCREEN);
 
-    HWND hwnd = CreateWindow(WIN_CLS, WINDOW_TITLE, WS_POPUP,
+    main_hwnd = CreateWindow(WIN_CLS, WINDOW_TITLE, WS_POPUP,
         0, 0, ::screen_width, ::screen_height, NULL, NULL,
         hInstance, NULL);
-    ShowWindow(hwnd, nShowCmd);
-    UpdateWindow(hwnd);
-
+    ShowWindow(main_hwnd, nShowCmd);
+    UpdateWindow(main_hwnd);
 
     MSG msg = { 0 };
     while (msg.message != WM_QUIT) {
@@ -101,7 +101,6 @@ void paint_window(HWND main_hwnd)
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam,
     LPARAM lParam)
 {
-    constexpr int MAIN_WINDOW { WM_APP + 1 };
     switch (message) {
     case MAIN_WINDOW:
     case WM_CREATE:
@@ -119,7 +118,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam,
         break;
     case WM_COMMAND:
         if (LOWORD(wParam) == main_button_id) {
-            game_init(hwnd);
+            game_init(main_hwnd);
             DestroyWindow(main_button);
             DestroyWindow(exit_button);
         } else if (LOWORD(wParam) == exit_button_id) {

@@ -1,40 +1,48 @@
 #include "game.hpp"
-#include "common.hpp"
 #include "../resource.h"
+#include "common.hpp"
 #include <vector>
 
 constexpr int NONE = 0, wall = 1, person = 2, ball = 4, box = 8;
 constexpr int sprite_height { 64 }, sprite_width { 64 };
-constexpr int male_pic_width{ 64 }, male_pic_height{ 51};
-constexpr int male_sprite_width{ male_pic_width / 4 }, male_sprit_height{male_pic_height / 3};
-
+constexpr int male_pic_width { 64 }, male_pic_height { 51 };
+constexpr int male_sprite_width { male_pic_width / 4 }, male_sprit_height { male_pic_height / 3 };
 
 struct graph_data_t {
-    std::vector<std::vector<int>> graph{};
-    int male_x{ -1 }, male_y{ -1 };
+    std::vector<std::vector<int>> graph {};
+    int male_x { -1 }, male_y { -1 };
+};
+
+struct game_data_t {
+    std::vector<struct graph_data_t> graphs;
+    int current_graph_idx { 0 };
 };
 enum class character_status_t : char { UP = 2,
     LEFT = 3,
     RIGHT = 1,
     DOWN = 0 };
 
+ULONGLONG g_tpre { 0 }, g_tnow { 0 };
+HDC g_hdc { nullptr }, g_mdc { nullptr }, g_bufdc { nullptr };
+HBITMAP b_male { nullptr }, b_box { nullptr }, b_ball { nullptr }, b_wall { nullptr };
+HWND* main_hwnd_ptr { nullptr };
 
-ULONGLONG g_tpre{ 0 }, g_tnow{ 0 };
-HDC g_hdc{ nullptr }, g_mdc{ nullptr }, g_bufdc{ nullptr };
-HBITMAP b_male{ nullptr }, b_box{ nullptr }, b_ball{ nullptr }, b_wall{ nullptr };
-HWND* main_hwnd { nullptr };
-
-character_status_t character_status{character_status_t::UP};
-int character_idx{ 0 };
+character_status_t character_status { character_status_t::UP };
+int character_idx { 0 };
 
 bool game_init_flag { false };
-bool game_end{ false };
-graph_data_t graph_data{};
+bool game_end { false };
+struct game_data_t game_data {
+};
 
-void update_graph(int x_offset, int y_offset);
+graph_data_t& get_graph_data()
+{
+    return game_data.graphs[game_data.current_graph_idx];
+}
 
 void update_graph(int x_offset, int y_offset)
 {
+    graph_data_t& graph_data = game_data.graphs[game_data.current_graph_idx];
     int& person = graph_data.graph[graph_data.male_y][graph_data.male_x];
 
     int next_male_x = graph_data.male_x + x_offset;
@@ -104,15 +112,19 @@ void game_process_key_down(HWND hwnd, UINT message, WPARAM wparam,
     }
 }
 
-void init_game_data() {
+void init_game_data()
+{
+    graph_data_t graph_data;
     graph_data.graph = { { wall, wall, wall, wall, wall },
         { wall, person, box, ball, wall },
         { wall, wall, wall, wall, wall } };
     graph_data.male_y = graph_data.male_x = 1;
     game_init_flag = true;
 
+    game_data.graphs.emplace_back(graph_data);
 }
-void load_resource() {
+void load_resource()
+{
     b_male = (HBITMAP)LoadImage(NULL, TEXT("./resource/male.bmp"), IMAGE_BITMAP,
         ::male_pic_width, ::male_pic_height, LR_LOADFROMFILE);
 
@@ -125,12 +137,13 @@ void load_resource() {
         128, 128, LR_LOADFROMFILE);
 }
 
-void init_system_resource(HWND & hwnd) {
+void init_system_resource(HWND& hwnd)
+{
     g_hdc = GetDC(hwnd);
     g_mdc = CreateCompatibleDC(g_hdc);
     g_bufdc = CreateCompatibleDC(g_hdc);
     HBITMAP bmp = CreateCompatibleBitmap(g_hdc, screen_width, screen_height);
-    ::main_hwnd = &hwnd;
+    ::main_hwnd_ptr = &hwnd;
 
     SelectObject(g_mdc, bmp);
 }
@@ -175,7 +188,7 @@ void draw_ele(int pic_type, int y, int x)
 
 void draw_graph()
 {
-    std::vector<std::vector<int>>& graph = graph_data.graph;
+    std::vector<std::vector<int>>& graph = get_graph_data().graph;
 
     int X = graph.front().size(), Y = graph.size();
     for (int y = 0; y < Y; y++) {
@@ -192,39 +205,33 @@ void draw_graph()
 
 INT_PTR CALLBACK MyDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    switch (message)
-    {
+    switch (message) {
     case WM_INITDIALOG:
         return (INT_PTR)TRUE;
 
     case WM_COMMAND:
-        // 处理命令消息，例如按钮点击
-        if (LOWORD(wParam) == IDOK)
-        {
-            EndDialog(hDlg, LOWORD(wParam));
-            return (INT_PTR)TRUE;
-        }
-        else if (LOWORD(wParam) == IDCANCEL)
-        {
-            EndDialog(hDlg, LOWORD(wParam));
-            return (INT_PTR)TRUE;
+        if (LOWORD(wParam) == ID_NEXT_LEVEL) {
+            EndDialog(hDlg, ID_NEXT_LEVEL);
+            return TRUE;
+        } else if (LOWORD(wParam) == ID_GOBACK) {
+            EndDialog(hDlg, ID_GOBACK);
+            return TRUE;
         }
         break;
 
-
-
     default:
-        return (INT_PTR)FALSE;
+        return FALSE;
     }
-    return (INT_PTR)FALSE;
+    return FALSE;
 }
 
-void check_game_data() {
-    std::vector<std::vector<int>>& graph = graph_data.graph;
+void check_game_data()
+{
+    std::vector<std::vector<int>>& graph = get_graph_data().graph;
     int Y = graph.size(), X = graph.front().size();
-    bool find_ball_flag{ false };
-	for (int y = 0; y < Y; y++) {
-		for (int x = 0; x < X; x++) {
+    bool find_ball_flag { false };
+    for (int y = 0; y < Y; y++) {
+        for (int x = 0; x < X; x++) {
             int ele = graph[y][x];
             if (ele == ball) {
                 find_ball_flag = true;
@@ -236,17 +243,24 @@ void check_game_data() {
         }
     }
     if (!find_ball_flag) {
-        //DialogBox(NULL, MAKEINTRESOURCE(IDD_DIALOG1), *main_hwnd, MyDialogProc);
+        HINSTANCE hInstance = (HINSTANCE)GetWindowLongPtr(*main_hwnd_ptr, GWLP_HINSTANCE);
+        int ret = DialogBox(hInstance, MAKEINTRESOURCE(ID_NEXT_LEVEL_DLG), nullptr, MyDialogProc);
+        if (ret == ID_GOBACK) {
+            HWND hwnd = *main_hwnd_ptr;
+            game_cleanup();
+            int ret = PostMessage(hwnd, MAIN_WINDOW, 0, 0);
+            printf("%d\n", ret);
+        }
     }
 }
 
 VOID game_loop()
 {
     ::g_tnow = GetTickCount64();
-    bool need_re_rend{ (::g_tnow - ::g_tpre >= 50) };
+    bool need_re_rend { (::g_tnow - ::g_tpre >= 50) };
     if (need_re_rend) {
-		draw_blackground();
-		draw_graph();
+        draw_blackground();
+        draw_graph();
         check_game_data();
         g_tpre = GetTickCount64();
     }
@@ -261,7 +275,7 @@ BOOL game_cleanup()
     DeleteObject(b_box);
     DeleteDC(g_bufdc);
     DeleteDC(g_mdc);
-    ReleaseDC(*main_hwnd, g_hdc);
-    main_hwnd = nullptr;
+    ReleaseDC(*main_hwnd_ptr, g_hdc);
+    main_hwnd_ptr = nullptr;
     return TRUE;
 }
