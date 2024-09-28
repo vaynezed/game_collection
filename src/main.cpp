@@ -25,20 +25,21 @@ int init_wnd_cls(WNDCLASSEX& wndClass, HINSTANCE& hInstance)
     wndClass.cbClsExtra = 0;
     wndClass.cbWndExtra = 0;
     wndClass.hInstance = hInstance;
-    wndClass.hIcon = (HICON)::LoadImage(NULL, TEXT("./resource/icon.ico"), IMAGE_ICON, 0, 0,
-        LR_DEFAULTSIZE | LR_LOADFROMFILE);
+    wndClass.hIcon
+        = (HICON)::LoadImage(NULL, TEXT("./resource/icon.ico"), IMAGE_ICON, 0,
+            0, LR_DEFAULTSIZE | LR_LOADFROMFILE);
     wndClass.hCursor = LoadCursor(NULL, IDC_ARROW);
     wndClass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
     wndClass.lpszMenuName = NULL;
     wndClass.lpszClassName = WIN_CLS;
 
-    if (!RegisterClassEx(
-            &wndClass))
+    if (!RegisterClassEx(&wndClass))
         return ERR;
     return OK;
 }
 
-int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
+int WINAPI
+WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
     _In_ LPSTR lpCmdLine, _In_ int nShowCmd)
 {
     WNDCLASSEX wndClass = { 0 };
@@ -47,34 +48,31 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
     ::screen_width = GetSystemMetrics(SM_CXSCREEN);
     ::screen_height = GetSystemMetrics(SM_CYSCREEN);
 
-    main_hwnd = CreateWindow(WIN_CLS, WINDOW_TITLE, WS_POPUP,
-        0, 0, ::screen_width, ::screen_height, NULL, NULL,
-        hInstance, NULL);
+    main_hwnd
+        = CreateWindow(WIN_CLS, WINDOW_TITLE, WS_POPUP, 0, 0, ::screen_width,
+            ::screen_height, NULL, NULL, hInstance, NULL);
     ShowWindow(main_hwnd, nShowCmd);
     UpdateWindow(main_hwnd);
 
     MSG msg = { 0 };
     while (msg.message != WM_QUIT) {
-        if (PeekMessage(
-                &msg, 0, 0, 0,
-                PM_REMOVE)) {
+        if (PeekMessage(&msg, 0, 0, 0, PM_REMOVE)) {
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         } else {
-            if (::game_init_flag) {
+            if (is_game_init()) {
                 game_loop();
             }
         }
     }
 
-    UnregisterClass(WIN_CLS,
-        wndClass.hInstance);
+    UnregisterClass(WIN_CLS, wndClass.hInstance);
     return 0;
 }
 
 void process_keydown(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    if (::game_init_flag) {
+    if (is_game_init()) {
         game_process_key_down(hwnd, message, wParam, lParam);
     } else {
         switch (wParam) {
@@ -98,22 +96,24 @@ void paint_window(HWND main_hwnd)
     ReleaseDC(main_hwnd, hdc);
 }
 
-LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam,
-    LPARAM lParam)
+LRESULT CALLBACK
+WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message) {
     case MAIN_WINDOW:
     case WM_CREATE:
         paint_window(hwnd);
-        main_button = CreateWindow(TEXT("BUTTON"), TEXT("开始游戏"),
+        main_button = CreateWindow(
+            TEXT("BUTTON"), TEXT("开始游戏"),
             WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
-            ::screen_width / 2 - 20, ::screen_height / 2 - 50, 100, 40,
-            hwnd, (HMENU)main_button_id,
+            ::screen_width / 2 - 20, ::screen_height / 2 - 50, 100, 40, hwnd,
+            (HMENU)main_button_id,
             (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE), NULL);
-        exit_button = CreateWindow(TEXT("BUTTON"), TEXT("退出游戏"),
+        exit_button = CreateWindow(
+            TEXT("BUTTON"), TEXT("退出游戏"),
             WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
-            ::screen_width / 2 - 20, ::screen_height / 2 + 100, 100,
-            40, hwnd, (HMENU)exit_button_id,
+            ::screen_width / 2 - 20, ::screen_height / 2 + 100, 100, 40, hwnd,
+            (HMENU)exit_button_id,
             (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE), NULL);
         break;
     case WM_COMMAND:
