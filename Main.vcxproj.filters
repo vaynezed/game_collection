@@ -33,6 +33,9 @@
     <ClCompile Include="src\dlg.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\games\sokoban.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\game.hpp">
@@ -48,6 +51,12 @@
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\dlg.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\games\sokoban.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\games\games.hpp">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>

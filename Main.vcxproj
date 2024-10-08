@@ -22,6 +22,7 @@
     <ClCompile Include="src\dlg.cpp" />
     <ClCompile Include="src\common.cpp" />
     <ClCompile Include="src\game.cpp" />
+    <ClCompile Include="src\games\sokoban.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -29,6 +30,8 @@
     <ClInclude Include="include\common.hpp" />
     <ClInclude Include="include\dlg.hpp" />
     <ClInclude Include="include\game.hpp" />
+    <ClInclude Include="include\games\games.hpp" />
+    <ClInclude Include="include\games\sokoban.hpp" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>

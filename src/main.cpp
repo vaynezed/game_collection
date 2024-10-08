@@ -1,6 +1,7 @@
 ﻿#include <tchar.h>
 #include "common.hpp"
-#include "game.hpp"
+#include "games/games.hpp"
+#include <memory>
 #include <windows.h>
 
 #pragma comment(lib, "winmm.lib")
@@ -14,6 +15,7 @@ HWND main_button, exit_button;
 constexpr int main_button_id = 101, exit_button_id = 102;
 HBITMAP hBitMap;
 HWND main_hwnd;
+std::unique_ptr<Game> game_ptr;
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam,
     LPARAM lParam);
@@ -53,6 +55,7 @@ WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
             ::screen_height, NULL, NULL, hInstance, NULL);
     ShowWindow(main_hwnd, nShowCmd);
     UpdateWindow(main_hwnd);
+    game_ptr = std::make_unique<SokoBanGame>();
 
     MSG msg = { 0 };
     while (msg.message != WM_QUIT) {
@@ -60,8 +63,8 @@ WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         } else {
-            if (is_game_init()) {
-                game_loop();
+            if (game_ptr->is_game_init()) {
+                game_ptr->game_loop();
             }
         }
     }
@@ -72,8 +75,8 @@ WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 
 void process_keydown(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    if (is_game_init()) {
-        game_process_key_down(hwnd, message, wParam, lParam);
+    if (game_ptr->is_game_init()) {
+        game_ptr->game_process_key_down(hwnd, message, wParam, lParam);
     } else {
         switch (wParam) {
         case VK_ESCAPE:
@@ -118,7 +121,7 @@ WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     case WM_COMMAND:
         if (LOWORD(wParam) == main_button_id) {
-            game_init(main_hwnd);
+            game_ptr->game_init(main_hwnd);
             DestroyWindow(main_button);
             DestroyWindow(exit_button);
         } else if (LOWORD(wParam) == exit_button_id) {

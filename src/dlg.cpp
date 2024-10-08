@@ -1,4 +1,5 @@
 #include "dlg.hpp"
+#include <cctype>
 
 void CenterDialog(HWND hwndDlg)
 {
@@ -26,7 +27,7 @@ void CenterDialog(HWND hwndDlg)
 }
 
 INT_PTR CALLBACK
-next_level_dlg_wnd_proc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+default_dlg_wnd_proc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message) {
     case WM_INITDIALOG: {
@@ -36,68 +37,17 @@ next_level_dlg_wnd_proc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
         return TRUE;
     }
 
-    case WM_COMMAND:
-        if (LOWORD(wParam) == ID_NEXT_LEVEL) {
-            EndDialog(hDlg, ID_NEXT_LEVEL);
-            return TRUE;
-        } else if (LOWORD(wParam) == ID_GOBACK) {
-            EndDialog(hDlg, ID_GOBACK);
-            return TRUE;
-        }
+    case WM_COMMAND: {
+        INT32 btn_id = LOWORD(wParam);
+        EndDialog(hDlg, btn_id);
+        return TRUE;
         break;
+    }
     case WM_DESTROY: {
         HWND parent_hwnd = GetParent(hDlg);
         EnableWindow(parent_hwnd, TRUE);
         break;
     }
-
-    default:
-        return FALSE;
-    }
-    return FALSE;
-}
-
-INT_PTR CALLBACK
-pre_level_dlg_wnd_proc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
-{
-    switch (message) {
-    case WM_INITDIALOG:
-        CenterDialog(hDlg);
-        return TRUE;
-
-    case WM_COMMAND:
-        if (LOWORD(wParam) == ID_PRE_LEVEL) {
-            EndDialog(hDlg, ID_PRE_LEVEL);
-            return TRUE;
-        } else if (LOWORD(wParam) == ID_GOBACK) {
-            EndDialog(hDlg, ID_GOBACK);
-            return TRUE;
-        }
-        break;
-
-    default:
-        return FALSE;
-    }
-    return FALSE;
-}
-
-INT_PTR CALLBACK
-restart_dlg_wnd_proc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
-{
-    switch (message) {
-    case WM_INITDIALOG:
-        CenterDialog(hDlg);
-        return TRUE;
-
-    case WM_COMMAND:
-        if (LOWORD(wParam) == ID_RESTART_BTN) {
-            EndDialog(hDlg, ID_RESTART_BTN);
-            return TRUE;
-        } else if (LOWORD(wParam) == ID_GOBACK) {
-            EndDialog(hDlg, ID_GOBACK);
-            return TRUE;
-        }
-        break;
 
     default:
         return FALSE;
