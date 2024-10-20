@@ -183,16 +183,16 @@ void SokoBanGame::init_game_data()
 }
 void SokoBanGame::load_resource()
 {
-    b_male = (HBITMAP)LoadImage(NULL, TEXT("./resource/male.bmp"),
+    b_male = (HBITMAP)LoadImage(NULL, TEXT("./resource/sokoban/male.bmp"),
         IMAGE_BITMAP, ::male_pic_width,
         ::male_pic_height, LR_LOADFROMFILE);
 
-    b_box = (HBITMAP)LoadImage(NULL, TEXT("./resource/box.bmp"), IMAGE_BITMAP,
+    b_box = (HBITMAP)LoadImage(NULL, TEXT("./resource/sokoban/box.bmp"), IMAGE_BITMAP,
         60, 60, LR_LOADFROMFILE);
 
-    b_ball = (HBITMAP)LoadImage(NULL, TEXT("./resource/ball.bmp"),
+    b_ball = (HBITMAP)LoadImage(NULL, TEXT("./resource/sokoban/ball.bmp"),
         IMAGE_BITMAP, 32, 32, LR_LOADFROMFILE);
-    b_wall = (HBITMAP)LoadImage(NULL, TEXT("./resource/wall.bmp"),
+    b_wall = (HBITMAP)LoadImage(NULL, TEXT("./resource/sokoban/wall.bmp"),
         IMAGE_BITMAP, 128, 128, LR_LOADFROMFILE);
 }
 

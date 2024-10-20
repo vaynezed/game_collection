@@ -36,6 +36,9 @@
     <ClCompile Include="src\games\sokoban.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\games\tetris.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\game.hpp">
@@ -59,18 +62,21 @@
     <ClInclude Include="include\games\games.hpp">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="include\games\tetris.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="resource\male.bmp">
+    <Image Include="resource\sokoban\male.bmp">
       <Filter>resource</Filter>
     </Image>
-    <Image Include="resource\box.bmp">
+    <Image Include="resource\sokoban\box.bmp">
       <Filter>resource</Filter>
     </Image>
-    <Image Include="resource\ball.bmp">
+    <Image Include="resource\sokoban\ball.bmp">
       <Filter>resource</Filter>
     </Image>
-    <Image Include="resource\wall.bmp">
+    <Image Include="resource\sokoban\wall.bmp">
       <Filter>resource</Filter>
     </Image>
   </ItemGroup>
