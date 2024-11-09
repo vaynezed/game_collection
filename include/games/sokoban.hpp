@@ -14,7 +14,7 @@ public:
 
 private:
     struct graph_data_t {
-        std::vector<std::vector<int>> graph {};
+        std::vector<std::vector<int>> matrix {};
         int male_x { -1 }, male_y { -1 };
     };
 
@@ -45,7 +45,7 @@ private:
 
 private:
     graph_data_t& get_graph_data();
-    void update_graph(int x_offset, int y_offset);
+    void move_tetris(int x_offset, int y_offset);
     void restart_level();
     void goback_main_menu();
     void find_person_from_graph(graph_data_t& graph_data);

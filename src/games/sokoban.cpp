@@ -18,21 +18,21 @@ SokoBanGame::get_graph_data()
     return game_data.current_graph;
 }
 
-void SokoBanGame::update_graph(int x_offset, int y_offset)
+void SokoBanGame::move_tetris(int x_offset, int y_offset)
 {
     graph_data_t& graph_data = get_graph_data();
-    int& PERSON = graph_data.graph[graph_data.male_y][graph_data.male_x];
+    int& PERSON = graph_data.matrix[graph_data.male_y][graph_data.male_x];
 
     int next_male_x = graph_data.male_x + x_offset;
     int next_male_y = graph_data.male_y + y_offset;
-    int& ele = graph_data.graph[next_male_y][next_male_x];
+    int& ele = graph_data.matrix[next_male_y][next_male_x];
 
     if (ele & WALL) {
         return;
     } else if (ele & BOX) {
         int next_ele_x = next_male_x + x_offset;
         int next_ele_y = next_male_y + y_offset;
-        int& next_ele = graph_data.graph[next_ele_y][next_ele_x];
+        int& next_ele = graph_data.matrix[next_ele_y][next_ele_x];
         if ((next_ele & WALL) || (next_ele & BOX)) {
             return;
         } else {
@@ -82,25 +82,25 @@ void SokoBanGame::game_process_key_down(HWND hwnd, UINT message, WPARAM wparam, 
     case 'W':
         character_status = character_status_t::UP;
         y_offset = -1;
-        update_graph(x_offset, y_offset);
+        move_tetris(x_offset, y_offset);
         break;
     case VK_DOWN:
     case 'S':
         character_status = character_status_t::DOWN;
         y_offset = +1;
-        update_graph(x_offset, y_offset);
+        move_tetris(x_offset, y_offset);
         break;
     case VK_RIGHT:
     case 'D':
         character_status = character_status_t::RIGHT;
         x_offset = +1;
-        update_graph(x_offset, y_offset);
+        move_tetris(x_offset, y_offset);
         break;
     case VK_LEFT:
     case 'A':
         character_status = character_status_t::LEFT;
         x_offset = -1;
-        update_graph(x_offset, y_offset);
+        move_tetris(x_offset, y_offset);
         break;
     case 'R':
         break;
@@ -112,11 +112,11 @@ void SokoBanGame::game_process_key_down(HWND hwnd, UINT message, WPARAM wparam, 
 void SokoBanGame::find_person_from_graph(graph_data_t& graph_data)
 {
     bool find_flag = { false };
-    std::vector<std::vector<int>>& graph = graph_data.graph;
-    int Y = graph.size(), X = graph.front().size();
+    std::vector<std::vector<int>>& matrix = graph_data.matrix;
+    int Y = matrix.size(), X = matrix.front().size();
     for (int y = 0; y < Y; y++) {
         for (int x = 0; x < X; x++) {
-            int ele = graph[y][x];
+            int ele = matrix[y][x];
             if (ele == PERSON) {
                 graph_data.male_x = x;
                 graph_data.male_y = y;
@@ -135,17 +135,17 @@ void SokoBanGame::init_game_data()
     game_init_flag = true;
 
     graph_data_t graph_data;
-    graph_data.graph = { { WALL, WALL, WALL, WALL, WALL },
+    graph_data.matrix = { { WALL, WALL, WALL, WALL, WALL },
         { WALL, PERSON, BOX, BALL, WALL },
         { WALL, WALL, WALL, WALL, WALL } };
     find_person_from_graph(graph_data);
     game_data.graphs.push_back(graph_data);
 
-    graph_data.graph = { {
-                             WALL,
-                             WALL,
-                             WALL,
-                         },
+    graph_data.matrix = { {
+                              WALL,
+                              WALL,
+                              WALL,
+                          },
         { WALL, BALL, WALL },
         { WALL, BOX, WALL },
         { WALL, PERSON, WALL },
@@ -155,7 +155,7 @@ void SokoBanGame::init_game_data()
     find_person_from_graph(graph_data);
     game_data.graphs.push_back(graph_data);
 
-    graph_data.graph = {
+    graph_data.matrix = {
         { NONE, NONE, WALL, WALL, WALL, NONE, NONE },
         { NONE, NONE, WALL, BALL, WALL, NONE, NONE },
         { WALL, WALL, WALL, BOX, WALL, WALL, WALL },
@@ -167,7 +167,7 @@ void SokoBanGame::init_game_data()
     find_person_from_graph(graph_data);
     game_data.graphs.push_back(graph_data);
 
-    graph_data.graph = {
+    graph_data.matrix = {
         { NONE, NONE, NONE, WALL, WALL, WALL },
         { WALL, WALL, WALL, WALL, BALL, WALL },
         { WALL, PERSON, BOX, NONE, NONE, WALL },
@@ -275,12 +275,12 @@ void SokoBanGame::pre_level()
 
 void SokoBanGame::draw_graph()
 {
-    std::vector<std::vector<int>>& graph = get_graph_data().graph;
+    std::vector<std::vector<int>>& matrix = get_graph_data().matrix;
 
-    int X = graph.front().size(), Y = graph.size();
+    int X = matrix.front().size(), Y = matrix.size();
     for (int y = 0; y < Y; y++) {
         for (int x = 0; x < X; x++) {
-            draw_ele(graph[y][x], y, x);
+            draw_ele(matrix[y][x], y, x);
         }
     }
     character_idx = (character_idx + 1) % 15;
@@ -292,12 +292,12 @@ void SokoBanGame::draw_graph()
 
 void SokoBanGame::check_game_data()
 {
-    std::vector<std::vector<int>>& graph = get_graph_data().graph;
-    int Y = graph.size(), X = graph.front().size();
+    std::vector<std::vector<int>>& matrix = get_graph_data().matrix;
+    int Y = matrix.size(), X = matrix.front().size();
     bool find_ball_flag { false };
     for (int y = 0; y < Y; y++) {
         for (int x = 0; x < X; x++) {
-            int ele = graph[y][x];
+            int ele = matrix[y][x];
             if (ele == BALL) {
                 find_ball_flag = true;
                 break;

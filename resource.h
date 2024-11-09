@@ -9,14 +9,17 @@
 #define ID_PRE_LEVEL                    106
 #define ID_RESTART_DLG                  107
 #define ID_RESTART_BTN                  108
+#define IDC_CONTINUE                    109
+#define IDD_VICTORY                     110
+#define IDOK                            1003
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        108
+#define _APS_NEXT_RESOURCE_VALUE        112
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1002
-#define _APS_NEXT_SYMED_VALUE           109
+#define _APS_NEXT_CONTROL_VALUE         1004
+#define _APS_NEXT_SYMED_VALUE           111
 #endif
 #endif

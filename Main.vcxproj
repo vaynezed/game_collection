@@ -24,6 +24,7 @@
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\games\sokoban.cpp" />
     <ClCompile Include="src\games\tetris.cpp" />
+    <ClCompile Include="src\games\utils.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -34,6 +35,7 @@
     <ClInclude Include="include\games\games.hpp" />
     <ClInclude Include="include\games\sokoban.hpp" />
     <ClInclude Include="include\games\tetris.hpp" />
+    <ClInclude Include="include\games\utils.hpp" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>

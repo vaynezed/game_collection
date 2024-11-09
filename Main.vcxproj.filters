@@ -39,6 +39,9 @@
     <ClCompile Include="src\games\tetris.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\games\utils.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\game.hpp">
@@ -63,6 +66,9 @@
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\games\tetris.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\games\utils.hpp">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
