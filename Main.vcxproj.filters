@@ -42,6 +42,9 @@
     <ClCompile Include="src\games\utils.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\games\snake.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\game.hpp">
@@ -71,6 +74,9 @@
     <ClInclude Include="include\games\utils.hpp">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="include\games\snake.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="resource\sokoban\male.bmp">
@@ -83,6 +89,21 @@
       <Filter>resource</Filter>
     </Image>
     <Image Include="resource\sokoban\wall.bmp">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="resource\snake\apple_red_64.bmp">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="resource\snake\bomb_64.bmp">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="resource\snake\snake_yellow_blob_64.bmp">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="resource\snake\snake_yellow_head_64.bmp">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="resource\snake\wall_block_64_0.bmp">
       <Filter>resource</Filter>
     </Image>
   </ItemGroup>

@@ -1,8 +1,9 @@
-#include "./games/sokoban.hpp"
+#include "games/sokoban.hpp"
+#include "games/utils.hpp"
 
 std::string SokoBanGame::to_string()
 {
-    return "SokoBanGame Class";
+    return "¶íÂÞË¹·½¿é";
 }
 
 SokoBanGame::SokoBanGame()
@@ -214,17 +215,9 @@ void SokoBanGame::game_init(HWND& hwnd)
     load_resource();
 }
 
-void SokoBanGame::draw_blackground(HDC* hdc, int width, int height, int color)
-{
-    HBRUSH hBrush = (HBRUSH)GetStockObject(color);
-    RECT rect { 0, 0, width, height };
-    FillRect(*hdc, &rect, hBrush);
-    DeleteObject(hBrush);
-}
-
 void SokoBanGame::draw_blackground()
 {
-    draw_blackground(&g_mdc, screen_width, screen_height, WHITE_BRUSH);
+    game::util::draw_blackground(&this->g_mdc, screen_width, screen_height, WHITE_BRUSH);
 }
 
 void SokoBanGame::draw_ele(int pic_type, int y, int x)
@@ -261,14 +254,14 @@ bool SokoBanGame::is_game_finish()
 void SokoBanGame::next_level()
 {
     assert(is_game_finish() == false);
-    draw_blackground(&g_hdc, screen_width, screen_height);
+    this->draw_blackground();
     ++game_data.current_graph_idx;
     game_data.current_graph = game_data.graphs[game_data.current_graph_idx];
 }
 void SokoBanGame::pre_level()
 {
     assert(game_data.current_graph_idx > 0);
-    draw_blackground(&g_hdc, screen_width, screen_height);
+    this->draw_blackground();
     --game_data.current_graph_idx;
     game_data.current_graph = game_data.graphs[game_data.current_graph_idx];
 }

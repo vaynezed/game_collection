@@ -52,7 +52,6 @@ private:
     void init_game_data();
     void load_resource();
     void init_system_resource(HWND& hwnd);
-    void draw_blackground(HDC* hdc, int width, int height, int color = WHITE_BRUSH);
     void draw_blackground();
     void draw_ele(int pic_type, int y, int x);
     bool is_game_finish();

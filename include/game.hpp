@@ -9,7 +9,6 @@
 
 class Game : public virtual base {
 protected:
-    HWND hwnd;
     bool game_init_flag { false };
 
 public:

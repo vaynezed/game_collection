@@ -44,7 +44,6 @@ void Tetris::game_init(HWND& hwnd)
     this->main_hwnd_ptr = &hwnd;
     srand(time(NULL));
 
-
     // init system resource
     this->g_hdc = GetDC(hwnd);
     g_mdc = CreateCompatibleDC(g_hdc);
@@ -67,17 +66,17 @@ void Tetris::game_init(HWND& hwnd)
 
 void Tetris::draw_game_scene()
 {
-    int GRAPH_HEIGHT { block_height * this->hs };
-    int GRAPH_WIDTH { block_width * (this->ws + 2) };
-    draw_blackground(&this->g_mdc, screen_width, screen_height, WHITE_BRUSH);
+    game::util::draw_blackground(&this->g_mdc, screen_width, screen_height, WHITE_BRUSH);
+
     this->draw_wall();
     this->draw_tetris();
     this->draw_graph();
     this->draw_score();
+
+    int GRAPH_HEIGHT { block_height * this->hs };
+    int GRAPH_WIDTH { block_width * (this->ws + 2) };
     BitBlt(this->g_hdc, screen_width / 2 - GRAPH_WIDTH / 2, screen_height / 2 - GRAPH_HEIGHT / 2, screen_width, screen_height, this->g_mdc, 0, 0, SRCCOPY);
-
 }
-
 
 void Tetris::game_loop()
 {
@@ -200,8 +199,8 @@ void Tetris::update_game_data()
 Tetris::tetris_shape_t Tetris::gen_tetris_shape()
 {
     tetris_shape_t tetris_shape;
-    tetris_shape.color = (rand_range(0, 4));
-    tetris_shape.matrix = rand_ele(Tetris::matrixs);
+    tetris_shape.color = (game::util::rand_range(0, 4));
+    tetris_shape.matrix = game::util::rand_ele(Tetris::matrixs);
     tetris_shape.width_pos = (this->ws) / 2;
     tetris_shape.height_pos = 0;
     return tetris_shape;

@@ -42,7 +42,7 @@ public:
 games_t games;
 
 const TCHAR* games_t::game_strs[] = {
-    TEXT("推箱子"), TEXT("俄罗斯方块")
+    TEXT("推箱子"), TEXT("俄罗斯方块"), TEXT("贪吃蛇")
 };
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam,
@@ -72,8 +72,10 @@ void init_game()
 {
     std::shared_ptr<Game> sokoBan_ptr { new SokoBanGame() };
     std::shared_ptr<Game> tetris_ptr { new Tetris() };
+    std::shared_ptr<Game> snake_ptr { new Snake() };
     games.add_game(sokoBan_ptr);
     games.add_game(tetris_ptr);
+    games.add_game(snake_ptr);
 }
 
 int WINAPI

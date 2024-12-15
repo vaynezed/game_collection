@@ -22,6 +22,7 @@
     <ClCompile Include="src\dlg.cpp" />
     <ClCompile Include="src\common.cpp" />
     <ClCompile Include="src\game.cpp" />
+    <ClCompile Include="src\games\snake.cpp" />
     <ClCompile Include="src\games\sokoban.cpp" />
     <ClCompile Include="src\games\tetris.cpp" />
     <ClCompile Include="src\games\utils.cpp" />
@@ -33,12 +34,18 @@
     <ClInclude Include="include\dlg.hpp" />
     <ClInclude Include="include\game.hpp" />
     <ClInclude Include="include\games\games.hpp" />
+    <ClInclude Include="include\games\snake.hpp" />
     <ClInclude Include="include\games\sokoban.hpp" />
     <ClInclude Include="include\games\tetris.hpp" />
     <ClInclude Include="include\games\utils.hpp" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="resource\snake\apple_red_64.bmp" />
+    <Image Include="resource\snake\bomb_64.bmp" />
+    <Image Include="resource\snake\snake_yellow_blob_64.bmp" />
+    <Image Include="resource\snake\snake_yellow_head_64.bmp" />
+    <Image Include="resource\snake\wall_block_64_0.bmp" />
     <Image Include="resource\sokoban\ball.bmp" />
     <Image Include="resource\sokoban\box.bmp" />
     <Image Include="resource\sokoban\male.bmp" />

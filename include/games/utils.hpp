@@ -2,14 +2,19 @@
 #include <Windows.h>
 #include <vector>
 
-void draw_blackground(HDC* hdc, int width, int height, int color);
+namespace game {
+namespace util {
 
-int rand_range(int lower, int upper);
+    void draw_blackground(HDC* hdc, int width, int height, int color);
 
-template <typename T>
-const T& rand_ele(const std::vector<T>& eles)
-{
-    int pos = rand_range(0, eles.size());
-    const T& t = eles[pos];
-    return t;
+    int rand_range(int lower, int upper);
+
+    template <typename T>
+    const T& rand_ele(const std::vector<T>& eles)
+    {
+        int pos = rand_range(0, eles.size());
+        const T& t = eles[pos];
+        return t;
+    }
+}
 }
