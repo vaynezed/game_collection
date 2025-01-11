@@ -23,9 +23,8 @@ public:
     void game_cleanup() override;
     void game_process_key_down(HWND hwnd, UINT message, WPARAM wParam,
         LPARAM lParam) override;
-    std::string to_string() override;
+    std::wstring to_string() override;
     Tetris() = default;
-    void goback_main_menu();
     ~Tetris() = default;
 
 private:
@@ -54,7 +53,6 @@ private:
     HBITMAP block_bmp { nullptr }, wall_bmp { nullptr };
     ULONGLONG g_tpre { 0 }, g_tnow { 0 };
     HDC g_hdc { nullptr }, g_mdc { nullptr }, g_bufdc { nullptr };
-    HWND* main_hwnd_ptr { nullptr };
 
     void clear_lines();
     void draw_wall();
