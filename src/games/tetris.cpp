@@ -208,6 +208,7 @@ Tetris::tetris_shape_t Tetris::gen_tetris_shape()
 
 void Tetris::restart_level()
 {
+
     game_data_t game_data;
     game_data.score = 0;
     game_data.init = true;
@@ -217,11 +218,6 @@ void Tetris::restart_level()
     this->game_data = game_data;
 }
 
-void Tetris::goback_main_menu()
-{
-    SendMessage(*main_hwnd_ptr, MAIN_WINDOW, NULL, NULL);
-    game_cleanup();
-}
 void Tetris::move_tetris(int x_offset)
 {
     tetris_shape_t& tetris_shape = this->game_data.tetris_shape;
@@ -322,7 +318,6 @@ void Tetris::clear_lines()
             v.resize(this->ws, static_cast<int>(color_t::UNDEFINED));
             matrix.insert(matrix.begin(), v);
         }
-        printf("abc");
     }
 }
 void Tetris::game_cleanup()
@@ -416,7 +411,7 @@ void Tetris::game_process_key_down(HWND hwnd, UINT message, WPARAM wParam,
         break;
     }
 }
-std::string Tetris::to_string()
+std::wstring Tetris::to_string()
 {
-    return std::string("俄罗斯方块");
+    return std::wstring(L"俄罗斯方块");
 }

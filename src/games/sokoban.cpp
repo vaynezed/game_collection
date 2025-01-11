@@ -1,9 +1,9 @@
 #include "games/sokoban.hpp"
 #include "games/utils.hpp"
 
-std::string SokoBanGame::to_string()
+std::wstring SokoBanGame::to_string()
 {
-    return "俄罗斯方块";
+    return L"推箱子";
 }
 
 SokoBanGame::SokoBanGame()
@@ -57,11 +57,6 @@ void SokoBanGame::restart_level()
     game_data.current_graph = game_data.graphs[game_data.current_graph_idx];
 }
 
-void SokoBanGame::goback_main_menu()
-{
-    SendMessage(*main_hwnd_ptr, MAIN_WINDOW, NULL, NULL);
-    game_cleanup();
-}
 void SokoBanGame::game_process_key_down(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam)
 {
     int x_offset { 0 }, y_offset { 0 };
@@ -255,6 +250,7 @@ void SokoBanGame::next_level()
 {
     assert(is_game_finish() == false);
     this->draw_blackground();
+    game::util::draw_blackground(&this->g_hdc, screen_width, screen_height, WHITE_BRUSH);
     ++game_data.current_graph_idx;
     game_data.current_graph = game_data.graphs[game_data.current_graph_idx];
 }
@@ -262,6 +258,7 @@ void SokoBanGame::pre_level()
 {
     assert(game_data.current_graph_idx > 0);
     this->draw_blackground();
+    game::util::draw_blackground(&this->g_hdc, screen_width, screen_height, WHITE_BRUSH);
     --game_data.current_graph_idx;
     game_data.current_graph = game_data.graphs[game_data.current_graph_idx];
 }
@@ -279,8 +276,8 @@ void SokoBanGame::draw_graph()
     character_idx = (character_idx + 1) % 15;
     const int GRAPH_HEIGHT { Y * sprite_height }, GRAPH_WIDTH { X * sprite_width };
     BitBlt(g_hdc, screen_width / 2 - GRAPH_WIDTH / 2,
-        screen_height / 2 - GRAPH_HEIGHT / 2, GRAPH_WIDTH * 5,
-        GRAPH_HEIGHT * 5, g_mdc, 0, 0, SRCCOPY);
+        screen_height / 2 - GRAPH_HEIGHT / 2, GRAPH_WIDTH,
+        GRAPH_HEIGHT, g_mdc, 0, 0, SRCCOPY);
 }
 
 void SokoBanGame::check_game_data()

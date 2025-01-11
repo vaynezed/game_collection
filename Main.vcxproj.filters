@@ -45,6 +45,15 @@
     <ClCompile Include="src\games\snake.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\base\ables.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\games\g_2048.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\games\chess.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\game.hpp">
@@ -75,6 +84,12 @@
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\games\snake.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\games\g_2048.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\games\chess.hpp">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,9 +1,6 @@
-﻿#include <tchar.h>
+﻿
 #include "common.hpp"
 #include "games/games.hpp"
-#include <CommCtrl.h>
-#include <memory>
-#include <windows.h>
 #define LEN(A) (sizeof(A) / sizeof(A[0]))
 
 #pragma comment(lib, "winmm.lib")
@@ -25,25 +22,27 @@ private:
     int idx = 0;
 
 public:
-    static const TCHAR* game_strs[];
+    std::vector<std::wstring> games_str;
     Game* game()
     {
         return this->game_ptrs[this->idx].get();
     }
     void reset_idx(int idx)
     {
+        size_t game_size = game_ptrs.size();
+        if (idx < 0 || idx > game_size) {
+            std::string msg = format("Index out of range %d", idx, 25);
+            throw std::out_of_range(msg);
+        }
         this->idx = idx;
     }
     void add_game(std::shared_ptr<Game> game)
     {
         this->game_ptrs.push_back(game);
+        this->games_str.push_back(game->to_string());
     }
 };
 games_t games;
-
-const TCHAR* games_t::game_strs[] = {
-    TEXT("推箱子"), TEXT("俄罗斯方块"), TEXT("贪吃蛇")
-};
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam,
     LPARAM lParam);
@@ -73,11 +72,16 @@ void init_game()
     std::shared_ptr<Game> sokoBan_ptr { new SokoBanGame() };
     std::shared_ptr<Game> tetris_ptr { new Tetris() };
     std::shared_ptr<Game> snake_ptr { new Snake() };
+    std::shared_ptr<Game> g_2048_ptr { new G_2048_t() };
+    std::shared_ptr<Game> chess_ptr { new Chess() };
     games.add_game(sokoBan_ptr);
     games.add_game(tetris_ptr);
     games.add_game(snake_ptr);
+    games.add_game(g_2048_ptr);
+    games.add_game(chess_ptr);
 }
 
+extern FILE* log_file;
 int WINAPI
 WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
     _In_ LPSTR lpCmdLine, _In_ int nShowCmd)
@@ -94,6 +98,8 @@ WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
             ::screen_height, NULL, NULL, hInstance, NULL);
     ShowWindow(main_hwnd, nShowCmd);
     UpdateWindow(main_hwnd);
+    RAII<FILE*> log_file_magment(fopen("log.txt", "w"), fclose);
+    log_file = log_file_magment.get();
 
     MSG msg = { 0 };
     while (msg.message != WM_QUIT) {
@@ -138,12 +144,34 @@ void paint_window(HWND main_hwnd)
 }
 void init_game_combobox()
 {
-    const TCHAR** game_strs = games_t::game_strs;
-    int games_len = LEN(games_t::game_strs);
-    for (int idx = 0; idx < games_len; idx++) {
-        SendMessage(game_combobox, (UINT)CB_ADDSTRING, (WPARAM)0, (LPARAM)game_strs[idx]);
+    const std::vector<std::wstring>& games_str = games.games_str;
+    size_t size = games_str.size();
+    for (int idx = 0; idx < size; idx++) {
+        SendMessage(game_combobox, (UINT)CB_ADDSTRING, (WPARAM)0, (LPARAM)(games_str[idx].c_str()));
     }
     SendMessage(game_combobox, CB_SETCURSEL, 0, 0);
+}
+void init_buttons(const HWND& hwnd)
+{
+    HINSTANCE hInstance = (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE);
+    main_button = (HWND)CreateWindow(
+        TEXT("BUTTON"), TEXT("开始游戏"),
+        WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
+        ::screen_width / 2 - 20, ::screen_height / 2 - 50, 100, 40, hwnd,
+        (HMENU)main_button_id,
+        hInstance, NULL);
+    exit_button = (HWND)CreateWindow(
+        TEXT("BUTTON"), TEXT("退出游戏"),
+        WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
+        ::screen_width / 2 - 20, ::screen_height / 2 + 100, 100, 40, hwnd,
+        (HMENU)exit_button_id,
+        hInstance, NULL);
+    game_combobox = (HWND)CreateWindow(
+        TEXT("COMBOBOX"), TEXT("DROPDOWNLIST"),
+        WS_VISIBLE | WS_CHILD | WS_BORDER | CBS_HASSTRINGS | CBS_DROPDOWNLIST,
+        ::screen_width / 2 - 20, ::screen_height / 2 - 150, 100, 300, hwnd,
+        (HMENU)game_combobox_id,
+        hInstance, NULL);
 }
 
 LRESULT CALLBACK
@@ -152,27 +180,8 @@ WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
     switch (message) {
     case MAIN_WINDOW:
     case WM_CREATE: {
-
+        init_buttons(hwnd);
         paint_window(hwnd);
-        HINSTANCE hInstance = (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE);
-        main_button = CreateWindow(
-            TEXT("BUTTON"), TEXT("开始游戏"),
-            WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
-            ::screen_width / 2 - 20, ::screen_height / 2 - 50, 100, 40, hwnd,
-            (HMENU)main_button_id,
-            hInstance, NULL);
-        exit_button = CreateWindow(
-            TEXT("BUTTON"), TEXT("退出游戏"),
-            WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
-            ::screen_width / 2 - 20, ::screen_height / 2 + 100, 100, 40, hwnd,
-            (HMENU)exit_button_id,
-            hInstance, NULL);
-        game_combobox = CreateWindow(
-            TEXT("COMBOBOX"), TEXT("DROPDOWNLIST"),
-            WS_VISIBLE | WS_CHILD | WS_BORDER | CBS_HASSTRINGS | CBS_DROPDOWNLIST,
-            ::screen_width / 2 - 20, ::screen_height / 2 - 150, 100, 300, hwnd,
-            (HMENU)game_combobox_id,
-            hInstance, NULL);
         init_game_combobox();
         break;
     }
@@ -199,6 +208,7 @@ WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_DRAWITEM:
         break;
     case WM_KEYDOWN:
+    case WM_LBUTTONDOWN:
         process_keydown(hwnd, message, wParam, lParam);
         break;
     case WM_DESTROY:
