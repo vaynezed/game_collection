@@ -8,7 +8,7 @@ public:
     void game_cleanup() override;
     void game_process_key_down(HWND hwnd, UINT message, WPARAM wParam,
         LPARAM lParam) override;
-    std::string to_string() override;
+    std::wstring to_string() override;
     SokoBanGame();
     ~SokoBanGame();
 
@@ -34,7 +34,6 @@ private:
     HDC g_hdc { nullptr }, g_mdc { nullptr }, g_bufdc { nullptr };
     HBITMAP b_male { nullptr }, b_box { nullptr }, b_ball { nullptr },
         b_wall { nullptr };
-    HWND* main_hwnd_ptr { nullptr };
 
     character_status_t character_status { character_status_t::UP };
     int character_idx { 0 };
@@ -47,7 +46,6 @@ private:
     graph_data_t& get_graph_data();
     void move_tetris(int x_offset, int y_offset);
     void restart_level();
-    void goback_main_menu();
     void find_person_from_graph(graph_data_t& graph_data);
     void init_game_data();
     void load_resource();

@@ -6,7 +6,13 @@ bool Game::is_game_init()
     return this->game_init_flag;
 }
 
-std::string Game::to_string()
+void Game::goback_main_menu()
 {
-    return "Game Class";
+	SendMessage(*main_hwnd_ptr, MAIN_WINDOW, NULL, NULL);
+    game_cleanup();
+}
+
+std::wstring Game::to_string()
+{
+    return L"Game Class";
 }

@@ -10,6 +10,7 @@
 class Game : public virtual base {
 protected:
     bool game_init_flag { false };
+    HWND* main_hwnd_ptr;
 
 public:
     virtual void game_init(HWND& hwnd) = 0;
@@ -19,7 +20,14 @@ public:
     virtual void game_process_key_down(HWND hwnd, UINT message, WPARAM wParam,
         LPARAM lParam)
         = 0;
-    std::string to_string() override;
+	virtual void goback_main_menu();
+    std::wstring to_string() override;
+
+    
+    virtual ~Game()
+    {
+        fprintf(log_file, "finish destructor\n");
+    }
 };
 
 constexpr int NONE = 0, WALL = 1, PERSON = 2, BALL = 4, BOX = 8;

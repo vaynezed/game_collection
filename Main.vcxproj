@@ -19,9 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\base\ables.cpp" />
     <ClCompile Include="src\dlg.cpp" />
     <ClCompile Include="src\common.cpp" />
     <ClCompile Include="src\game.cpp" />
+    <ClCompile Include="src\games\g_2048.cpp" />
     <ClCompile Include="src\games\snake.cpp" />
     <ClCompile Include="src\games\sokoban.cpp" />
     <ClCompile Include="src\games\tetris.cpp" />
@@ -34,6 +36,7 @@
     <ClInclude Include="include\dlg.hpp" />
     <ClInclude Include="include\game.hpp" />
     <ClInclude Include="include\games\games.hpp" />
+    <ClInclude Include="include\games\g_2048.hpp" />
     <ClInclude Include="include\games\snake.hpp" />
     <ClInclude Include="include\games\sokoban.hpp" />
     <ClInclude Include="include\games\tetris.hpp" />
