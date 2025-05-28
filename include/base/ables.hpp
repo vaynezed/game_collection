@@ -1,4 +1,5 @@
 
+#include "nlohmann/json.hpp"
 #include <cstdarg>
 #include <iostream>
 #include <sstream>
@@ -86,3 +87,13 @@ private:
         }
     }
 };
+
+class Server {
+public:
+    virtual bool open_connection() = 0;
+    virtual bool close_connection() = 0;
+    virtual std::string call(const std::string& msg) = 0;
+};
+class GameServer;
+
+GameServer* get_game_server(const std::string& host, int port);

@@ -54,6 +54,9 @@
     <ClCompile Include="src\games\chess.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\base\log.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\game.hpp">
@@ -92,6 +95,15 @@
     <ClInclude Include="include\games\chess.hpp">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="include\nlohmann\json.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\nlohmann\json_fwd.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\base\log.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="resource\sokoban\male.bmp">
@@ -119,6 +131,54 @@
       <Filter>resource</Filter>
     </Image>
     <Image Include="resource\snake\wall_block_64_0.bmp">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="resource\chess\black_cannon.bmp">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="resource\chess\black_elephant.bmp">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="resource\chess\black_guard.bmp">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="resource\chess\black_king.bmp">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="resource\chess\black_knight.bmp">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="resource\chess\black_rook.bmp">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="resource\chess\black_soldier.bmp">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="resource\chess\chess_board.bmp">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="resource\chess\empty_chess.bmp">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="resource\chess\red_cannon.bmp">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="resource\chess\red_elephant.bmp">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="resource\chess\red_guard.bmp">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="resource\chess\red_king.bmp">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="resource\chess\red_knight.bmp">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="resource\chess\red_rook.bmp">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="resource\chess\red_soldier.bmp">
       <Filter>resource</Filter>
     </Image>
   </ItemGroup>

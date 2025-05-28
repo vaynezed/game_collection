@@ -5,6 +5,7 @@
 
 #pragma comment(lib, "winmm.lib")
 #pragma comment(lib, "Msimg32.lib")
+#pragma comment(lib, "ws2_32.lib") // 链接 Winsock 库
 
 const TCHAR* WINDOW_TITLE = TEXT("游戏集合");
 const TCHAR* WIN_CLS = TEXT("MainWin");
@@ -20,7 +21,7 @@ class games_t {
 
 private:
     std::vector<std::shared_ptr<Game>> game_ptrs;
-	int game_model_idx = 0;
+    int game_model_idx = 0;
     int idx = 0;
 
 public:
@@ -37,10 +38,11 @@ public:
             throw std::out_of_range(msg);
         }
         this->idx = idx;
-		std::vector<std::wstring> game_models = std::move(this->game()->game_models());
+        std::vector<std::wstring> game_models = std::move(this->game()->game_models());
         reset_game_models(game_models);
     }
-    void reset_game_model_index(int idx) {
+    void reset_game_model_index(int idx)
+    {
         this->game_model_idx = idx;
         this->game()->set_game_model(idx);
     }
@@ -159,11 +161,12 @@ void init_game_combobox()
     }
     SendMessage(game_combobox, CB_SETCURSEL, 0, 0);
 }
-void reset_game_models( const std::vector<std::wstring>& game_models) {
+void reset_game_models(const std::vector<std::wstring>& game_models)
+{
     SendMessage(game_model_combobox, CB_RESETCONTENT, 0, 0);
-	for (const auto& model : game_models) {
-		SendMessage(game_model_combobox, CB_ADDSTRING, 0, (LPARAM)model.c_str());
-	}
+    for (const auto& model : game_models) {
+        SendMessage(game_model_combobox, CB_ADDSTRING, 0, (LPARAM)model.c_str());
+    }
 }
 
 void init_buttons(const HWND& hwnd)
@@ -188,7 +191,7 @@ void init_buttons(const HWND& hwnd)
         (HMENU)game_combobox_id,
         hInstance, NULL);
 
-    game_model_combobox= (HWND)CreateWindow(
+    game_model_combobox = (HWND)CreateWindow(
         TEXT("COMBOBOX"), TEXT("DROPDOWNLIST"),
         WS_VISIBLE | WS_CHILD | WS_BORDER | CBS_HASSTRINGS | CBS_DROPDOWNLIST,
         ::screen_width / 2 - 20, ::screen_height / 2 - 150, 100, 300, hwnd,
@@ -225,13 +228,12 @@ WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
                 int item_index = SendMessage((HWND)lParam, (UINT)CB_GETCURSEL, (WPARAM)0, (LPARAM)0);
                 games.reset_idx(item_index);
             }
-        }
-        else if (window_id == game_model_combobox_id) {
-			int event_id = HIWORD(wParam);
-			if (event_id == CBN_SELCHANGE) {
-				int item_index = SendMessage((HWND)lParam, (UINT)CB_GETCURSEL, (WPARAM)0, (LPARAM)0);
+        } else if (window_id == game_model_combobox_id) {
+            int event_id = HIWORD(wParam);
+            if (event_id == CBN_SELCHANGE) {
+                int item_index = SendMessage((HWND)lParam, (UINT)CB_GETCURSEL, (WPARAM)0, (LPARAM)0);
                 games.reset_game_model_index(item_index);
-			}
+            }
         }
         break;
     }

@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\base\ables.cpp" />
+    <ClCompile Include="src\base\log.cpp" />
     <ClCompile Include="src\dlg.cpp" />
     <ClCompile Include="src\common.cpp" />
     <ClCompile Include="src\game.cpp" />
@@ -33,6 +34,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\base\ables.hpp" />
+    <ClInclude Include="include\base\log.hpp" />
     <ClInclude Include="include\common.hpp" />
     <ClInclude Include="include\dlg.hpp" />
     <ClInclude Include="include\game.hpp" />
@@ -43,9 +45,27 @@
     <ClInclude Include="include\games\sokoban.hpp" />
     <ClInclude Include="include\games\tetris.hpp" />
     <ClInclude Include="include\games\utils.hpp" />
+    <ClInclude Include="include\nlohmann\json.hpp" />
+    <ClInclude Include="include\nlohmann\json_fwd.hpp" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="resource\chess\black_cannon.bmp" />
+    <Image Include="resource\chess\black_elephant.bmp" />
+    <Image Include="resource\chess\black_guard.bmp" />
+    <Image Include="resource\chess\black_king.bmp" />
+    <Image Include="resource\chess\black_knight.bmp" />
+    <Image Include="resource\chess\black_rook.bmp" />
+    <Image Include="resource\chess\black_soldier.bmp" />
+    <Image Include="resource\chess\chess_board.bmp" />
+    <Image Include="resource\chess\empty_chess.bmp" />
+    <Image Include="resource\chess\red_cannon.bmp" />
+    <Image Include="resource\chess\red_elephant.bmp" />
+    <Image Include="resource\chess\red_guard.bmp" />
+    <Image Include="resource\chess\red_king.bmp" />
+    <Image Include="resource\chess\red_knight.bmp" />
+    <Image Include="resource\chess\red_rook.bmp" />
+    <Image Include="resource\chess\red_soldier.bmp" />
     <Image Include="resource\snake\apple_red_64.bmp" />
     <Image Include="resource\snake\bomb_64.bmp" />
     <Image Include="resource\snake\snake_yellow_blob_64.bmp" />
@@ -132,7 +152,7 @@
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\third_party\include;$(ProjectDir)\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -148,7 +168,7 @@
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\third_party\include;$(ProjectDir)\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -162,9 +182,9 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_WINDOWS;_WIN64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\third_party\include;$(ProjectDir)\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -181,7 +201,8 @@
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\third_party\include;$(ProjectDir)\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

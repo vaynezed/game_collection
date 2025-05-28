@@ -84,6 +84,16 @@ BEGIN
     LTEXT           "黑方胜利",IDC_VICTORY_STATIC,83,19,33,8
 END
 
+IDD_CONNECT_DLG DIALOGEX 0, 0, 277, 123
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_SYSMENU
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "确定",IDYES,49,90,50,14
+    PUSHBUTTON      "取消",IDCANCEL,115,91,50,14
+    EDITTEXT        IDE_ROOM_ID,63,51,120,17,ES_AUTOHSCROLL
+    LTEXT           "房间ID",IDC_STATIC,29,53,24,8
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -95,7 +105,6 @@ GUIDELINES DESIGNINFO
 BEGIN
     ID_NEXT_LEVEL_DLG, DIALOG
     BEGIN
-        MOCKUP, 0, 50, 0, 0, ".\resource\wall.bmp"
         LEFTMARGIN, 7
         RIGHTMARGIN, 234
         TOPMARGIN, 7
@@ -125,6 +134,14 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 74
     END
+
+    IDD_CONNECT_DLG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 270
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 116
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -153,6 +170,49 @@ IDD_VICTORY AFX_DIALOG_LAYOUT
 BEGIN
     0
 END
+
+IDD_CONNECT_DLG AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_BLACK_CANNON        BITMAP                  "resource\\chess\\black_cannon.bmp"
+
+IDB_BLACK_ELEPHANT      BITMAP                  "resource\\chess\\black_elephant.bmp"
+
+IDB_BLACK_GUARD         BITMAP                  "resource\\chess\\black_guard.bmp"
+
+IDB_BLACK_KING          BITMAP                  "resource\\chess\\black_king.bmp"
+
+IDB_BLACK_KNIGHT        BITMAP                  "resource\\chess\\black_knight.bmp"
+
+IDB_BLACK_ROOK          BITMAP                  "resource\\chess\\black_rook.bmp"
+
+IDB_BLACK_SOLDIER       BITMAP                  "resource\\chess\\black_soldier.bmp"
+
+IDB_CHESS_BOARD         BITMAP                  "resource\\chess\\chess_board.bmp"
+
+IDB_EMPTY_CHESS         BITMAP                  "resource\\chess\\empty_chess.bmp"
+
+IDB_RED_CANNON          BITMAP                  "resource\\chess\\red_cannon.bmp"
+
+IDB_RED_ELEPHANT        BITMAP                  "resource\\chess\\red_elephant.bmp"
+
+IDB_RED_GUARD           BITMAP                  "resource\\chess\\red_guard.bmp"
+
+IDB_RED_KING            BITMAP                  "resource\\chess\\red_king.bmp"
+
+IDB_RED_KNIGHT          BITMAP                  "resource\\chess\\red_knight.bmp"
+
+IDB_RED_ROOK            BITMAP                  "resource\\chess\\red_rook.bmp"
+
+IDB_RED_SOLDIER         BITMAP                  "resource\\chess\\red_soldier.bmp"
 
 #endif    // 中文(简体，中国) resources
 /////////////////////////////////////////////////////////////////////////////

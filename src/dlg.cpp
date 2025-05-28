@@ -1,4 +1,6 @@
 #include "dlg.hpp"
+#include "../resource.h"
+#include "WinUser.h"
 #include <cctype>
 
 void CenterDialog(HWND hwndDlg)
@@ -53,4 +55,51 @@ default_dlg_wnd_proc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
         return FALSE;
     }
     return FALSE;
+}
+
+template <typename T>
+inline INT_PTR Dialog<T>::dlg_proc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    return INT_PTR();
+}
+inline INT_PTR Dialog<struct user_info_t>::dlg_proc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    static Dialog<struct user_info_t>* pThis = nullptr;
+    switch (message) {
+    case WM_INITDIALOG: {
+        pThis = reinterpret_cast<Dialog<struct user_info_t>*>(lParam);
+        HWND parent_hwnd = GetParent(hDlg);
+        EnableWindow(parent_hwnd, FALSE);
+        CenterDialog(hDlg);
+        return TRUE;
+    }
+    case WM_COMMAND: {
+        INT32 btn_id = LOWORD(wParam);
+        if (btn_id == IDYES || btn_id == IDCANCEL) {
+            EndDialog(hDlg, btn_id);
+        }
+        return TRUE;
+        break;
+    }
+    case WM_DESTROY: {
+        HWND parent_hwnd = GetParent(hDlg);
+        EnableWindow(parent_hwnd, TRUE);
+        TCHAR buf[256];
+        GetDlgItemText(hDlg, IDE_ROOM_ID, buf, sizeof(buf) / sizeof(buf[0]));
+        pThis->data.room_id = std::wstring(buf);
+        break;
+    }
+
+    default:
+        return FALSE;
+    }
+    return FALSE;
+}
+
+int LoginDialog::show(HWND* hwnd)
+{
+    HINSTANCE hInstance = (HINSTANCE)GetWindowLongPtr(*hwnd, GWLP_HINSTANCE);
+    int ret = DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_CONNECT_DLG),
+        *hwnd, Dialog<struct user_info_t>::dlg_proc, (LPARAM)this);
+    return TRUE;
 }
