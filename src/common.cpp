@@ -3,7 +3,6 @@
 #include <cstdio>
 int screen_width { -1 }, screen_height { -1 };
 
-FILE* log_file = nullptr;
 // Define the operator+ function outside the Pos struct
 Pos Pos::operator+(const struct PosOffset& pos_offset) const
 {

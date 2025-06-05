@@ -57,6 +57,9 @@
     <ClCompile Include="src\base\log.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\games\pool.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\game.hpp">
@@ -102,6 +105,9 @@
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\base\log.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\games\pool.hpp">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
@@ -179,6 +185,9 @@
       <Filter>resource</Filter>
     </Image>
     <Image Include="resource\chess\red_soldier.bmp">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="resource\chess\bitmap1.bmp">
       <Filter>resource</Filter>
     </Image>
   </ItemGroup>

@@ -1,7 +1,6 @@
 
 #include "game.hpp"
 
-extern FILE* log_file;
 bool Game::is_game_init()
 {
     return this->game_init_flag;
@@ -42,5 +41,5 @@ void Game::set_game_model(int idx)
 
 Game::~Game()
 {
-    fprintf(log_file, "finish destructor\n");
 }
+

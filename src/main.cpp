@@ -1,5 +1,6 @@
 ﻿
 #include "common.hpp"
+#include "base/log.hpp"
 #include "games/games.hpp"
 #define LEN(A) (sizeof(A) / sizeof(A[0]))
 
@@ -16,6 +17,7 @@ constexpr int main_button_id = 101, exit_button_id = 102, game_combobox_id = 103
 HBITMAP hBitMap;
 HWND main_hwnd;
 void reset_game_models(const std::vector<std::wstring>& game_models);
+Log* logger;
 
 class games_t {
 
@@ -84,14 +86,15 @@ void init_game()
     std::shared_ptr<Game> snake_ptr { new Snake() };
     std::shared_ptr<Game> g_2048_ptr { new G_2048_t() };
     std::shared_ptr<Game> chess_ptr { new Chess() };
+    std::shared_ptr<Game>  pool_ptr{ new Pool() };
     games.add_game(sokoBan_ptr);
     games.add_game(tetris_ptr);
     games.add_game(snake_ptr);
     games.add_game(g_2048_ptr);
     games.add_game(chess_ptr);
+    games.add_game(pool_ptr);
 }
 
-extern FILE* log_file;
 int WINAPI
 WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
     _In_ LPSTR lpCmdLine, _In_ int nShowCmd)
@@ -99,6 +102,10 @@ WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
     WNDCLASSEX wndClass = { 0 };
     init_game();
     init_wnd_cls(wndClass, hInstance);
+	logger = Log::get_logger("main", "main.log");
+
+	logger->info("init game");
+    logger->flush();
 
     ::screen_width = GetSystemMetrics(SM_CXSCREEN);
     ::screen_height = GetSystemMetrics(SM_CYSCREEN);
@@ -108,8 +115,6 @@ WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
             ::screen_height, NULL, NULL, hInstance, NULL);
     ShowWindow(main_hwnd, nShowCmd);
     UpdateWindow(main_hwnd);
-    RAII<FILE*> log_file_magment(fopen("log.txt", "w"), fclose);
-    log_file = log_file_magment.get();
 
     MSG msg = { 0 };
     while (msg.message != WM_QUIT) {
@@ -124,6 +129,8 @@ WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
     }
 
     UnregisterClass(WIN_CLS, wndClass.hInstance);
+	logger->info("exit game");
+    Log::remove_logger("main");
     return 0;
 }
 
@@ -241,6 +248,10 @@ WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     case WM_KEYDOWN:
     case WM_LBUTTONDOWN:
+    case WM_LBUTTONUP:
+    case WM_MOUSEMOVE:
+    case WM_RBUTTONUP:
+    case WM_RBUTTONDOWN:
         process_keydown(hwnd, message, wParam, lParam);
         break;
     case WM_DESTROY:

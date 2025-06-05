@@ -428,12 +428,22 @@ inline void Chess::render_chess_board()
 
 void Chess::process_click(int width_pos, int height_pos)
 {
-    if (this->game_model_idx == 1) {
-        this->game_model_pair(width_pos, height_pos);
-    } else if (this->game_model_idx == 0) {
-        this->game_model_ai(width_pos, height_pos);
-    } else if (this->game_model_idx == 2) {
-        this->game_model_web(width_pos, height_pos);
+
+    int offset_x_from_chess = width_pos - (screen_width / 2 - board_bmp_width / 2);
+    int offset_y_from_chess = height_pos - (screen_height / 2 - board_bmp_height / 2);
+    int chess_piece_height_idx = offset_y_from_chess / chess_piece_height;
+    int chess_piece_width_idx = offset_x_from_chess / chess_piece_width;
+    Pos current_pos { chess_piece_width_idx, chess_piece_height_idx };
+    bool pos_in_board = this->pos_in_board(current_pos);
+    if (pos_in_board) {
+		// If the click position is in the chess board, process the click
+		if (this->game_model_idx == Chess::PAIR_MODEL) {
+			this->game_model_pair(width_pos, height_pos);
+		} else if (this->game_model_idx == Chess::AI_MODEL) {
+			this->game_model_ai(width_pos, height_pos);
+		} else if (this->game_model_idx == Chess::NET_MODEL) {
+			this->game_model_web(width_pos, height_pos);
+		}
     }
     this->check_game_data();
 }

@@ -133,6 +133,9 @@ std::string GameServer::read_line()
     int bytes = 0;
     while (true) {
         bytes = recv(this->socket_fd, buffer, size, 0);
+        if (bytes == -1) {
+            throw "server close";
+        }
         buffer[bytes] = '\0';
         std::string message = buffer;
         size_t line_end_pos = message.find('\n');

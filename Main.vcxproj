@@ -24,6 +24,7 @@
     <ClCompile Include="src\dlg.cpp" />
     <ClCompile Include="src\common.cpp" />
     <ClCompile Include="src\game.cpp" />
+    <ClCompile Include="src\games\pool.cpp" />
     <ClCompile Include="src\games\chess.cpp" />
     <ClCompile Include="src\games\g_2048.cpp" />
     <ClCompile Include="src\games\snake.cpp" />
@@ -38,6 +39,7 @@
     <ClInclude Include="include\common.hpp" />
     <ClInclude Include="include\dlg.hpp" />
     <ClInclude Include="include\game.hpp" />
+    <ClInclude Include="include\games\pool.hpp" />
     <ClInclude Include="include\games\chess.hpp" />
     <ClInclude Include="include\games\games.hpp" />
     <ClInclude Include="include\games\g_2048.hpp" />
@@ -50,6 +52,7 @@
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="resource\chess\bitmap1.bmp" />
     <Image Include="resource\chess\black_cannon.bmp" />
     <Image Include="resource\chess\black_elephant.bmp" />
     <Image Include="resource\chess\black_guard.bmp" />
@@ -153,6 +156,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)\third_party\include;$(ProjectDir)\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -169,6 +173,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)\third_party\include;$(ProjectDir)\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
