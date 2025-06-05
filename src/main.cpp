@@ -1,5 +1,6 @@
 ﻿
 #include "common.hpp"
+#include "base/log.hpp"
 #include "games/games.hpp"
 #define LEN(A) (sizeof(A) / sizeof(A[0]))
 
@@ -16,6 +17,7 @@ constexpr int main_button_id = 101, exit_button_id = 102, game_combobox_id = 103
 HBITMAP hBitMap;
 HWND main_hwnd;
 void reset_game_models(const std::vector<std::wstring>& game_models);
+Log* logger;
 
 class games_t {
 
@@ -91,7 +93,6 @@ void init_game()
     games.add_game(chess_ptr);
 }
 
-extern FILE* log_file;
 int WINAPI
 WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
     _In_ LPSTR lpCmdLine, _In_ int nShowCmd)
@@ -99,6 +100,10 @@ WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
     WNDCLASSEX wndClass = { 0 };
     init_game();
     init_wnd_cls(wndClass, hInstance);
+	logger = Log::get_logger("main", "main.log");
+
+	logger->info("init game");
+    logger->flush();
 
     ::screen_width = GetSystemMetrics(SM_CXSCREEN);
     ::screen_height = GetSystemMetrics(SM_CYSCREEN);
@@ -108,8 +113,6 @@ WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
             ::screen_height, NULL, NULL, hInstance, NULL);
     ShowWindow(main_hwnd, nShowCmd);
     UpdateWindow(main_hwnd);
-    RAII<FILE*> log_file_magment(fopen("log.txt", "w"), fclose);
-    log_file = log_file_magment.get();
 
     MSG msg = { 0 };
     while (msg.message != WM_QUIT) {
@@ -124,6 +127,7 @@ WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
     }
 
     UnregisterClass(WIN_CLS, wndClass.hInstance);
+    Log::remove_logger("main");
     return 0;
 }
 
